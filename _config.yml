@@ -17,3 +17,4 @@ github_username:  sunjay
 
 # Build settings
 markdown: kramdown
+permalink: /:year/:month/:day/:title
