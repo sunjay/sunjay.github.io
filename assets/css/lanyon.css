@@ -454,6 +454,7 @@ a.pagination-item:hover {
 /* Yellow */
 .theme-base-0a .sidebar,
 .theme-base-0a .sidebar .sidebar-nav-item,
+.theme-base-0a .sidebar-toggle:hover,
 .theme-base-0a .sidebar-toggle:active,
 .theme-base-0a #sidebar-checkbox:checked ~ .sidebar-toggle {
   background-color: #FAFF69;
