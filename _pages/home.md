@@ -1,11 +1,10 @@
----
 id: 2
 title: Excellence And Experience That Gets You Results
 date: 2013-09-17T12:11:04+00:00
 author: Sunjay Varma
 layout: page
 guid: http://sunjay.ca/?page_id=2
----
+
 My name is Sunjay Varma. <img class="alignright  wp-image-274 responsive-hide-sm" style="border: 1px solid #EEE;" src="http://sunjay.ca/wp-content/uploads/2013/09/IGP8228_square.jpg" alt="" width="176" height="176" />I am all about creating things that are amazing. My goal in any project is to produce the most outstanding product possible.
 
 More than just a programmer, web developer or future computer engineer, I have the ability to pick up on the little details that make a project great. I can provide you with a product that thoroughly covers even the smallest things that other developers might miss. Those details add up to a better experience for you, and for the people working with what we're making.
