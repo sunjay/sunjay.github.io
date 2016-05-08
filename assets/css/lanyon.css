@@ -335,18 +335,11 @@ a.sidebar-nav-item:focus {
 .related-posts h3 {
   margin-top: 0;
 }
-.related-posts li small {
+.related-posts li small,
+.related-posts li a:hover small {
   font-size: 75%;
   color: #999;
 }
-.related-posts li a:hover {
-  color: #268bd2;
-  text-decoration: none;
-}
-.related-posts li a:hover small {
-  color: inherit;
-}
-
 
 /*
  * Pagination
@@ -469,8 +462,7 @@ a.pagination-item:hover {
   background-color: #424c58;
   color: white;
 }
-.theme-base-0a .sidebar-toggle,
-.theme-base-0a .related-posts li a:hover {
+.theme-base-0a .sidebar-toggle {
   color: #FAFF69;
 }
 .theme-base-0a .masthead-title a {
