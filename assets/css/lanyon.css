@@ -310,7 +310,9 @@ a.sidebar-nav-item:focus {
 }
 .page-title,
 .post-title {
+  display: block;
   margin-top: 0;
+  margin-bottom: 10px;
 }
 
 /* Meta data line below post title */
