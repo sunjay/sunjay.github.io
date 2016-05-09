@@ -470,6 +470,9 @@ a.pagination-item:hover {
 .theme-base-0a .masthead-title a {
   color: #424c58;
 }
+.theme-base-0a .related {
+  border-top-color: #FAFF69;
+}
 
 /* Green */
 .theme-base-0b .sidebar,
