@@ -5,6 +5,5 @@
 - Link to resume
 - Projects page
 - Home page
-- Analytics
-- Comments
+- Analytics (test in production)
 
