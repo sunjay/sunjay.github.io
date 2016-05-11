@@ -25,7 +25,6 @@
  * Pagination
  * Reverse layout
  * Themes
- */
 
 
 /*
@@ -49,6 +48,22 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
   color: #313131;
   letter-spacing: -.025rem;
+}
+
+.left {
+  float: left;
+}
+img.left {
+  margin: 0;
+  margin-right: 10px;
+}
+
+.right {
+  float: right;
+}
+img.right {
+  margin: 0;
+  margin-left: 10px;
 }
 
 
