@@ -327,6 +327,9 @@ a.sidebar-nav-item:focus {
 .post {
   margin-bottom: 4em;
 }
+.condensed .post {
+  margin-bottom: 1em;
+}
 
 /* Blog post or page title */
 .post-title a {
