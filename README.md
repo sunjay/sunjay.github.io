@@ -3,6 +3,5 @@
 ## TODO
 
 - Projects page
-- Home page
-- Analytics (test in production)
+- Recents posts list on the home page
 
