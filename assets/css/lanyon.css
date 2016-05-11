@@ -489,7 +489,7 @@ a.pagination-item:hover {
   border-top-color: #FAFF69;
 }
 .theme-base-0a .alert {
-  background: #FAFF69;
+  background: rgba(250,255,105,0.20);
   border: 1px solid #C0C451;
   border-radius: 10px;
   color: #424c58;
