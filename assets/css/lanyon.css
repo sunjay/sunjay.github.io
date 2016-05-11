@@ -473,6 +473,14 @@ a.pagination-item:hover {
 .theme-base-0a .related {
   border-top-color: #FAFF69;
 }
+.theme-base-0a .alert {
+  background: #FAFF69;
+  border: 1px solid #C0C451;
+  border-radius: 10px;
+  color: #424c58;
+  padding: 10px;
+  margin-bottom: 10px;
+}
 
 /* Green */
 .theme-base-0b .sidebar,
