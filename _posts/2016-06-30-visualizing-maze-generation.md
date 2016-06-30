@@ -15,8 +15,8 @@ which another algorithm can do its path finding.
 
 These mazes are randomly generated. The algorithm is implemented so that you can see each iteration of the maze being developed.
 
-**Final Result:** [Maze Generator](livesite)<br />
-**Source Code:** [GitHub](sourcecode)
+**Final Result:** [Maze Generator][livesite]<br />
+**Source Code:** [GitHub][sourcecode]
 
 ## The First Approach
 
