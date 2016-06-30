@@ -20,7 +20,7 @@ These mazes are randomly generated. The algorithm is implemented so that you can
 
 ## The First Approach
 
-<div style='position:relative;padding-bottom:calc(100% / 1.46)'><iframe src='https://gfycat.com/ifr/DeliciousOffensiveIndianabat' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<div style='position:relative;padding-bottom:calc(100% / 1.46);margin-bottom:10px'><iframe src='https://gfycat.com/ifr/DeliciousOffensiveIndianabat' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
 
 In this first approach, the algorithm works in two stages:
 
@@ -41,8 +41,9 @@ from the starting point to a finish at another edge. Unfortunately in this
 instance this ends up being a fairly short and unsatisfying path. The
 algorithm spends most of its remaining time filling in the rest of the maze.
 
-In practice, there are a whole host of issues with an approach like this.
-For the maze to be difficult, there must be a strong solution.
+In practice, there are many issues with an approach like this.
+
+For the maze to be difficult, there must be a strong (fairly complicated) solution.
 By trying to go after the solution first, most of the algorithm's time is
 spent doing expensive calculations to avoid accidentally creating something
 that is not satisfying to solve. This is very error prone.
@@ -57,48 +58,63 @@ Problems that occur while trying to generate a strong solution:
 Working around all of these often requires backtracking and then generating
 other paths to go around whatever issue happens to come up. This is
 expensive and by generating additional paths, we often end up creating much
-of the rest of the maze before we even find a good solution. This is
-backwards from our original intention of generating the full solution path
-before generating the rest of the maze.
+of the rest of the maze before we even find a good solution. These
+complications force us to deviate from our original intention of generating
+the full solution path before generating the rest of the maze.
 
 Using a 2D grid to model the maze makes doing things like backtracking,
 finding the length of your current path, etc. very expensive or overly complicated.
 
-## Second Approach
+## The Second Approach
 
-<div style='position:relative;padding-bottom:calc(100% / 1.46)'><iframe src='https://gfycat.com/ifr/IllustriousImaginativeAltiplanochinchillamouse' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<div style='position:relative;padding-bottom:calc(100% / 1.46);margin-bottom:10px'><iframe src='https://gfycat.com/ifr/IllustriousImaginativeAltiplanochinchillamouse' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
 
-In the second approach the maze is modelled as a graph of connected
-points that happen to lie on a 2D grid. Nodes map to points on the 2D grid.
+The main insight leading into the second approach is a complete change in
+how the maze is represented.
+
+In this approach, the maze is modelled as a graph of paths connecting
+points that happen to lie on a 2D grid.
+
+Each node maps to a point on the grid.
+
 Each connection (or edge) represents an open path that can be traversed.
 Nodes can only connect with other nodes that are adjacent to them on the
-grid. Any adjacent nodes without an edge between them are shown on the grid
-with a wall.
+grid.
 
-This is a much more sophisticated knowledge representation because it models
-the connections and paths rather than the opaque points on the 2D grid itself.
+Any adjacent nodes without an edge between them are shown on the grid
+with a wall.
 
 ![Second Approach to Maze Generation](/assets/posts/maze-generator-second-approach.jpg){: .center}
 Second Approach: Tree of Paths
 {: .text-center}
 
-This works if we restrict our graph to having no cycles. A graph without any
-cycles is equivalent to a tree structure. In mazes, cycles are not
-necessarily a useful property because they have the potential to introduce
-unwanted shortcuts or other complications. Having this restriction allows us
-to make useful assumptions about the structure of the maze.
+This is a much more sophisticated knowledge representation because it models
+the connections and paths rather than relying on the opaque points on the 2D grid.
+
+If we restrict our graph to having no cycles, this representation becomes
+quite convenient. A graph without any cycles is equivalent to a tree
+structure. In mazes, cycles are not the most useful property because they
+have the potential to introduce unwanted shortcuts or other complications.
+Having this restriction allows us to make useful assumptions about the
+structure of the maze.
 
 As shown in the GIF above, the end in this approach is not selected until
-the entire maze tree is generated. Selecting the solution can be done more
-robustly now since all the information about the entire maze is available
-for use.
+the entire maze tree is generated. Every point on the grid is associated
+with a node in the tree.
+
+Selecting the solution can now be done more robustly because all the information about the entire maze is available for use.
 
 This second approach also has an added benefit for the person watching
 because the solution is not revealed to them at the beginning.
 
-By modelling a maze as a tree of paths with each node mapping to a point on a 2D grid, we can generate mazes and pick strong solutions that make solving them interesting.
+By modelling a maze as a tree of paths with each node mapping to a point on
+a 2D grid, we can generate good mazes and pick strong solutions that make
+solving the maze both interesting and satisfying.
 
-Make sure you check out the [live visualization][livesite] and [fork me on GitHub][sourcecode]. [Issues][issues] are welcome if you find any bugs or have a great idea for an additional feature.
+Make sure you check out the [live visualization][livesite]. Pull requests
+are welcome, so feel free to [fork me on GitHub][sourcecode]. If you find
+any bugs or have a great idea for an additional feature, please let me know
+by opening an [issue][issues].
 
 [livesite]: http://sunjay.ca/maze-generator
 [sourcecode]: https://github.com/sunjay/maze-generator
