@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Rust Code Coverage with kcov + Travis CI + Codecov / Coveralls
+title: "Rust Code Coverage Guide: kcov + Travis CI + Codecov / Coveralls"
 author: sunjay
 categories:
   - Programming
