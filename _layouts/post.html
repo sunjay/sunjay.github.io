@@ -9,7 +9,7 @@ layout: default
   {{ content }}
 
   <p>
-    <a class="highlighted" href="http://www.reddit.com{{ page.subreddit }}/submit?url={{ site.url | cgi_escape }}{{ page.url | cgi_escape }}&title={{ page.title | cgi_escape }}">
+    <a class="highlighted" href="http://www.reddit.com{{ page.subreddit }}/submit?url={{ page.url | prepend:site.url | cgi_escape }}&title={{ page.title | cgi_escape }}">
       discuss this post on reddit
     </a>
   <p/>
