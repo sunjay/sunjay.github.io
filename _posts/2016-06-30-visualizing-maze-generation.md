@@ -2,6 +2,7 @@
 layout: post
 title: Visualizing Maze Generation
 author: sunjay
+subreddit: /r/coding
 categories:
   - Programming
 ---

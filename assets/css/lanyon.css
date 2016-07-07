@@ -93,6 +93,15 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.highlighted {
+  background-color: #FAFF69;
+  color: inherit;
+}
+
+a.highlighted {
+  padding: 2px 5px;
+}
+
 
 /*
  * Wrapper
