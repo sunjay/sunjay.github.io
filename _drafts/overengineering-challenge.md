@@ -37,9 +37,10 @@ attempt up here for everyone to see.
 4. Anything you use must actually lead to the desired output or have reasonable justification for its use
 
 Unreasonably superfluous additions or repetitions do not count. The point is
-to be creative and combine as many different things as possible. Try to make
-it as organized and coherent as possible. It might be complicated, but it
-still has to work!
+to be creative and combine as many different things as possible. You can
+do this as a long series of simple steps, several long and complicated steps
+or a mix of both. Try to make it as organized and coherent as possible. It
+might be complicated, but it still has to work!
 
 **Extra points:** actually implement part or all of your crazy solution
 
