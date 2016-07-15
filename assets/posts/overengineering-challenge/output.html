@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Overengineering Challenge Output</title>
+
+  <!--
+  Author: Sunjay Varma
+  All the HTML and CSS required to make this page is included in this file
+  Checkout http://sunjay.ca for the actual challenge
+  -->
+
+  <style type="text/css">
+    html {
+      -webkit-color-box-sizing: border-color-box;
+      -moz-color-box-sizing: border-color-box;
+      color-box-sizing: border-color-box;
+      font-family: sans-serif;
+      background: #EEE;
+    }
+
+    *, *:before, *:after {
+      -webkit-color-box-sizing: inherit;
+      -moz-color-box-sizing: inherit;
+      color-box-sizing: inherit;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .color-box {
+      height: 200px;
+      margin: 10px 0;
+    }
+
+    .tiny-color-box {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      vertical-align: middle;
+      margin-top: -4px;
+      border-radius: 50%;
+    }
+
+    .scrollable-table {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+    table th {
+      background: #AAA;
+      padding: 5px 10px;
+      white-space: nowrap;
+    }
+
+    table th:first-child {
+      text-align: left;
+    }
+
+    table tr {
+      border-top: 1px solid black;
+      background: #DDD;
+    }
+
+    table tr:nth-child(even) {
+      background: #CCC;
+    }
+
+    table td {
+      padding: 5px 10px;
+    }
+
+    table td:not(:first-child) {
+      text-align: center;
+    }
+
+    /* 12 column grid, minimal implementation */
+    .row:before,
+    .row:after {
+      content: " ";
+      display: table;
+    }
+    .row:after {
+      clear: both;
+    }
+
+    .col-1 {
+      float: left;
+      width: 8.33333333%;
+    }
+
+    .col-4 {
+      float: left;
+      width: 33.33333333%;
+    }
+
+    .col-6 {
+      float: left;
+      width: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Wonderful World of Colors!</h1>
+
+    <h2>Primary Colors</h2>
+    <div class="row">
+      <div class="col-4 color-box" style="background: red;"></div>
+      <div class="col-4 color-box" style="background: blue;"></div>
+      <div class="col-4 color-box" style="background: yellow;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-4">Red</div>
+      <div class="col-4">Blue</div>
+      <div class="col-4">Yellow</div>
+    </div>
+
+    <h2>Secondary Colors</h2>
+    <div class="row">
+      <div class="col-4 color-box" style="background: orange;"></div>
+      <div class="col-4 color-box" style="background: violet;"></div>
+      <div class="col-4 color-box" style="background: green;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-4">Orange</div>
+      <div class="col-4">Violet</div>
+      <div class="col-4">Green</div>
+    </div>
+
+    <h2>Warm Colors</h2>
+    <div class="row">
+      <div class="col-4 color-box" style="background: yellow;"></div>
+      <div class="col-4 color-box" style="background: orange;"></div>
+      <div class="col-4 color-box" style="background: red;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-4">Yellow</div>
+      <div class="col-4">Orange</div>
+      <div class="col-4">Red</div>
+    </div>
+
+    <h2>Cool Colors</h2>
+    <div class="row">
+      <div class="col-4 color-box" style="background: green;"></div>
+      <div class="col-4 color-box" style="background: blue;"></div>
+      <div class="col-4 color-box" style="background: violet;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-4">Green</div>
+      <div class="col-4">Blue</div>
+      <div class="col-4">Violet</div>
+    </div>
+
+    <h2>Complimentary Colors</h2>
+    <div class="row">
+      <div class="col-6 color-box" style="background: yellow;"></div>
+      <div class="col-6 color-box" style="background: violet;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-6">Yellow</div>
+      <div class="col-6">Violet</div>
+    </div>
+    <div class="row">
+      <div class="col-6 color-box" style="background: orange;"></div>
+      <div class="col-6 color-box" style="background: blue;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-6">Orange</div>
+      <div class="col-6">Blue</div>
+    </div>
+    <div class="row">
+      <div class="col-6 color-box" style="background: red;"></div>
+      <div class="col-6 color-box" style="background: green;"></div>
+    </div>
+    <div class="row text-center">
+      <div class="col-6">Red</div>
+      <div class="col-6">Green</div>
+    </div>
+
+    <h2>Shades of Gray</h2>
+    <div class="row">
+      <div class="col-1 color-box" style="background: rgb(255, 255, 255);"></div>
+      <div class="col-1 color-box" style="background: rgb(230, 230, 230);"></div>
+      <div class="col-1 color-box" style="background: rgb(207, 207, 207);"></div>
+      <div class="col-1 color-box" style="background: rgb(184, 184, 184);"></div>
+      <div class="col-1 color-box" style="background: rgb(161, 161, 161);"></div>
+      <div class="col-1 color-box" style="background: rgb(138, 138, 138);"></div>
+      <div class="col-1 color-box" style="background: rgb(115, 115, 115);"></div>
+      <div class="col-1 color-box" style="background: rgb(92, 92, 92);"></div>
+      <div class="col-1 color-box" style="background: rgb(69, 69, 69);"></div>
+      <div class="col-1 color-box" style="background: rgb(46, 46, 46);"></div>
+      <div class="col-1 color-box" style="background: rgb(23, 23, 23);"></div>
+      <div class="col-1 color-box" style="background: rgb(0, 0, 0);"></div>
+    </div>
+
+    <h2>Summary</h2>
+    <div class="scrollable-table">
+      <table>
+        <thead>
+          <th>Color Name</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Complimentary Color</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="tiny-color-box" style="background: red"></span>
+              Red
+            </td>
+            <td>Primary</td>
+            <td>Warm</td>
+            <td>Green</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="tiny-color-box" style="background: blue"></span>
+              Blue
+            </td>
+            <td>Primary</td>
+            <td>Cool</td>
+            <td>Orange</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="tiny-color-box" style="background: yellow"></span>
+              Yellow
+            </td>
+            <td>Primary</td>
+            <td>Warm</td>
+            <td>Violet</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="tiny-color-box" style="background: orange"></span>
+              Orange
+            </td>
+            <td>Secondary</td>
+            <td>Warm</td>
+            <td>Blue</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="tiny-color-box" style="background: violet"></span>
+              Violet
+            </td>
+            <td>Secondary</td>
+            <td>Cool</td>
+            <td>Yellow</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="tiny-color-box" style="background: green"></span>
+              Green
+            </td>
+            <td>Secondary</td>
+            <td>Cool</td>
+            <td>Red</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p></p>
+    </div>
+  </div>
+</body>
+</html>
