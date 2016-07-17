@@ -45,6 +45,27 @@ From backend to frontend:
 
 ### TL;DR:
 
+1. Page begins to load
+2. Page queries REST API for encrypted WebSocket server URL
+3. API server places request in a task queue
+4. Task queue is randomly shuffled until placed task is finally selected
+5. API server returns an encrypted WebSocket server URL
+6. Page queries REST API for WebSocket server URL decryption key
+7. API server **might** give back the final encryption key
+8. Page decrypts WebSocket server URL using each key it was given in succession
+9. Page connects with WebSocket server
+10. Page begins conversation with WebSocket server
+11. Page asks WebSocket server for some color information
+12. WebSocket server doesn't want to tell
+13. Page attempts to bribe server
+14. WebSocket server is insulted closes connection
+15. WebSocket server closes connection
+16. Page opens another WebSocket connection
+17. WebSocket server takes the bribe this time and provides some information
+18. This goes on for a while...
+19. Finally the page has some data
+TODO
+
 The PostgreSQL database holds the color data, essentially the summary table at the end of the page.
 
 The RethinkDB database holds a single document for each shade of gray from white to black.
