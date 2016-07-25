@@ -378,19 +378,19 @@ any conflicts:
 ```
 
 This will make a folder for each set of results before running the tests.
-This will not impact Codecov because it will automatically find all coverage
-results regardless of the folder structure.
+Using this will not impact Codecov because it will automatically find all
+coverage results regardless of the folder structure.
 
-You need to use this loop because kcov will only run one executable at a
-time, so if your `<executable name>-*` pattern matches more than one
-executable, you will accidentally skip running one of your executables.
+You only need to use this loop if your `<executable name>-*` pattern matches
+more than one executable. Without it, only some of your test results will be
+reflected in the kcov report.
 
 ```bash
   bash <(curl -s https://codecov.io/bash) &&
 ```
 
-This uploads the coverage to Codecov and is explained in more detail below.
-Make sure you **remove** this line if you do not plan to use Codecov.
+This line uploads the coverage to Codecov and is explained in more
+detail below. Make sure you **remove** this line if you do not plan to use Codecov.
 
 ### Caveats of this setup
 
@@ -401,8 +401,9 @@ Make sure you **remove** this line if you do not plan to use Codecov.
 * kcov is recompiled during every build. This adds some time to every build.
     This can potentially be improved using Travis CI's
     [caching feature][travis-ci-caching]. Cache the kcov executable
-    to avoid repeating this step in every build. A future version of
-    this guide may include this improvement.
+    to avoid repeating this step in every build.
+
+A future version of this guide may resolve these issues.
 
 ## Codecov Integration
 
@@ -414,7 +415,7 @@ command to the `after_success:` section of your configuration.
 ```
 
 In the configuration above, this is included after building and running
-kcov. **You do not need to add this line again if you are using the exact
+kcov. **You do not need to add this line again if you are using the
 Travis CI configuration above.**
 
 This loads and runs a script that automatically finds and uploads coverage
@@ -450,8 +451,8 @@ Uploaded code coverage
 
 ## Coveralls Integration
 
-Coveralls integration is built in to kcov. To upload to Coveralls, simply
-add the `--coveralls-id` to your kcov command.
+Coveralls integration is built in to kcov. To upload your coverage to
+Coveralls, add the `--coveralls-id` to your kcov command.
 
 For Travis CI, you can update the kcov command to be:
 
@@ -465,13 +466,15 @@ look into what is going on.
 
 Make sure you delete the Codecov specific line if you are using the
 Travis CI configuration above with Coveralls. See the *Codecov Integration*
-section for more details.
+section for more details about which part is Codecov specific.
 
 ## Wrapping Up
 
-You should now have the necessary tools and knowledge to not only generate
-code coverage for your Rust project locally, but also do so with Travis CI
-and Codecov or Coveralls as well.
+You should now have the necessary tools and knowledge to:
+
+* Generate code coverage for your Rust project locally
+* Integrate code coverage into your Travis configuration
+* Upload code coverage data to either Codecov or Coveralls
 
 For questions about or problems with Rust code coverage, use the
 [Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
