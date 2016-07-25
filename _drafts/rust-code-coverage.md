@@ -16,17 +16,22 @@ with this guide, please open a [new issue][website-issues].
 
 The de facto [code coverage tutorial for Rust][old-tutorial]{: rel="nofollow" target="_blank"} was published
 on March 15, 2015. If you Google "rust code coverage" you will largely find
-links to that tutorial. It is a great guide, but since it has been over a year since it was published, many things have changed.
+links to that tutorial. It is a great guide, many things have changed in the
+year since it was published.
 
 This guide covers everything you need to know to get code coverage working
 for your Rust project. It goes over some common problems you may run into
-as well as their solutions. It also covers integration into
-[Travis CI][travis-ci] and how to publish your coverage results to either
-[Codecov][codecov] or [Coveralls][coveralls]
+as well as their solutions. [Travis CI][travis-ci] integration and
+publishing your coverage results to either [Codecov][codecov] or
+[Coveralls][coveralls] will be discussed near the end.
 
-I recently [helped][codecov-rust-pr] the [Codecov][codecov] team fully
-integrate Rust by writing their [Rust example][codecov-example-rust].
-With that, you have detailed instructions for sending your coverage data to [Codecov][codecov]. This guide will go into even more detail about Rust code coverage.
+I recently dove quite deeply into the current state of Rust code coverage
+when I set it up for [my own project][lion-github] and also
+[helped][codecov-rust-pr] the [Codecov][codecov] team fully
+integrate Rust into their platform. I wrote the
+[Codecov Rust example][codecov-example-rust] which contains detailed
+instructions for sending your coverage data to Codecov. This
+guide will go into even more detail about Rust code coverage.
 
 ## Prerequisites
 
