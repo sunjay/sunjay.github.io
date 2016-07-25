@@ -6,20 +6,17 @@ categories:
   - Programming
 ---
 
-**Last Updated:** TODO
+**Last Updated:** July 25, 2016
 
 For questions about or problems with Rust code coverage, use the
-[Rust IRC channels][rust-irc], StackOverflow or [Contact][contact] me.
+[Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
 This website is [open-source][website-source] so if you find a problem
 with this guide, please open a [new issue][website-issues].
 {: .alert}
 
 The de facto [code coverage tutorial for Rust][old-tutorial]{: rel="nofollow" target="_blank"} was published
 on March 15, 2015. If you Google "rust code coverage" you will largely find
-links to that tutorial. It is a great guide and covers much of what you
-need to know to generate code coverage data for your project. Since it
-was written over a year ago, some things have changed and not every part
-of those instructions work right out of the box.
+links to that tutorial. It is a great guide, but since it has been over a year since it was published, many things have changed.
 
 This guide covers everything you need to know to get code coverage working
 for your Rust project. It goes over some common problems you may run into
@@ -54,8 +51,8 @@ working locally if you are not on that operating system.
 As of writing this guide, there is no way to generate code coverage
 data for Rust doctests. This is because the doctest executable is only
 generated temporarily while it is being run. If you find a way to collect
-coverage for doctests, please open a [new issue][website-issues] and
-let me know.
+coverage for doctests, please open a [new issue][website-issues] or
+[contact][contact] me to let me know.
 
 ## Getting kcov
 
@@ -64,7 +61,7 @@ work with Rust executables.
 
 Before you begin, see if your package manager has a kcov version greater
 than or equal to kcov 31. If it does, you will likely be able to install
-kcov using your package manager and skip the Manually Compiling kcov section
+kcov using your package manager and skip the *Manually Compiling kcov* section
 entirely. Earlier versions of kcov may also work, but I have only verified
 kcov 31.
 
@@ -154,11 +151,13 @@ only one of them will run.
 
 **Note:** If collecting coverage for multiple test executables, make sure you
 are not inadvertently overwriting the coverage data of one of your other
-executables. kcov will automatically store coverage in a new directory for
-each of your executables. It will also merge any coverage it finds each
-time you run it for a different executable. This may cause some lines to
+executables. When you run kcov, it will automatically store coverage in a
+directory named after the full name of the executable you pass in.
+It will also merge any coverage it finds each time you run it for a
+different executable. This may cause some lines to
 appear uncovered even though they are covered in another test executable.
-Codecov will automatically search for and merge all of your coverage data
+Whether or not things are merged should not be an issue for Codecov because
+it will automatically search for and merge all of your coverage data
 automatically. Coveralls should be able to do this as well.
 
 The path `/usr/lib` is included in `--exclude-pattern` so that shared
@@ -199,7 +198,8 @@ Click image to view larger size
 Click image to view larger size
 {: .text-center}
 
-You can view the [live Codecov coverage report][lion-codecov] as well.
+The [live Codecov coverage report][lion-codecov] generated using the kcov
+coverage data is available on Codecov.
 
 ## Coverage Data
 
@@ -285,7 +285,7 @@ after_success: |
   echo "Uploaded code coverage"
 ```
 
-### Configuration Details
+### Step-by-step Explanation
 
 Let's go through each section of the configuration.
 
@@ -398,31 +398,28 @@ Make sure you **remove** this line if you do not plan to use Codecov.
     coverage. You can customize this behaviour by refining the Travis CI
     configuration [`script` option][travis-ci-script].
 
-### Further refinement
-
-One downside to this setup is that it forces you to recompile kcov with
-every build. This dramatically slows down the build process. Using Travis
-CI's [caching feature][travis-ci-caching], you can cache the kcov executable
-and avoid this step in the majority of your builds.
+* kcov is recompiled during every build. This adds some time to every build.
+    This can potentially be improved using Travis CI's
+    [caching feature][travis-ci-caching]. Cache the kcov executable
+    to avoid repeating this step in every build. A future version of
+    this guide may include this improvement.
 
 ## Codecov Integration
 
-Integrating Codecov with Travis CI requires that you add a single line to
-the `after_success:` section of your configuration.
+Integrating Codecov with Travis CI requires that you add a single bash
+command to the `after_success:` section of your configuration.
 
+```bash
+  bash <(curl -s https://codecov.io/bash)
 ```
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-```
 
-You can use this with any CI provider. Just replace `after_success:` with
-whatever is appropriate for the system you are using. This loads and runs a
-script that automatically finds and uploads coverage data to Codecov from a
-Travis CI machine. Only the `cobertura.xml` files that kcov generates should
-be uploaded.
+In the configuration above, this is included after building and running
+kcov. **You do not need to add this line again if you are using the exact
+Travis CI configuration above.**
 
-**This is already present in the above configuration.** You do not need
-to add this if you are using exactly the configuration above.
+This loads and runs a script that automatically finds and uploads coverage
+data to Codecov from a Travis CI machine. Only the `cobertura.xml` files
+that kcov generates should be uploaded.
 
 The source code of the script is [available on GitHub][codecov-uploader-src]
 and you can see which files it is uploading in the build output.
@@ -463,49 +460,23 @@ kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo,/usr/lib --verify t
 ```
 
 I don't use Coveralls myself, so if this integration does not work for you
-please open an [Issue][website-issues] or [contact][contact] me and I will take a look.
+please open a [new issue][website-issues] or [contact][contact] me and I will
+look into what is going on.
+
+Make sure you delete the Codecov specific line if you are using the
+Travis CI configuration above with Coveralls. See the *Codecov Integration*
+section for more details.
 
 ## Wrapping Up
 
-If you have any questions, please don't hesitate to [contact][contact] me.
-For problems you find in any of the above, open an issue TODO
+You should now have the necessary tools and knowledge to not only generate
+code coverage for your Rust project locally, but also do so with Travis CI
+and Codecov or Coveralls as well.
 
-
-Outline:
-
-- contributed to [Codecov][codecov] to integrate Rust code coverage from kcov
-- A few things you should know before we begin:
-    - This guide will likely only work for x86 and x86_64 Linux
-        - this is enough for running on things like Travis, but you may need to take extra steps if you want to run code coverage locally
-    - kcov not a Rust-specific code coverage tool, it uses DWARF debugging
-      information to figure out which lines have run
-    - kcov does not always generate entirely accurate code coverage: http://stackoverflow.com/questions/32521800/why-does-kcov-calculate-incorrect-code-coverage-statistics-for-rust-programs
-    - As of writing this guide, there is no way to generate code coverage data for Rust doctests. The executable is only created temporarily while it is being run. If you find a way to collect doctest coverage, please open an [Issue][website-issues] and let me know.
-- Old versions of kcov, including most packaged versions will not work with
-  a Rust executable.
-- We need to compile it manually
-- (Detailed kcov compilation instructions)
-- You can see an HTML coverage report by opening `foo/bar/index.html`
-- The `--verify` flag does BLAH and without it you may get FOO error message
-- Travis CI instructions
-    - These instructions are specific to Travis CI, but should be ubiquitous enough to translate to any CI provider
-    - To integrate with Travis CI, we essentially need to take the above instructions and translate them into a Travis CI configuration
-    - Some caveats: since Travis CI trashes all files between builds, it is useful to use the Travis CI cache option to significantly speed up the build
-    - Tests run twice, once in the build and once for coverage -- this can be fixed
-- Integrating Codecov is as easy as running the codecov.io bash script at the end of your build after success: (example + full Travis CI)
-    - It is important to run each test executable individually
-    - You should tweak this if necessary based on your current setup
-    - This should work out-of-the-box for most projects setup with cargo
-    - This will upload the cobertura.xml files generated by kcov automatically
-- Coveralls integration is built in to kcov
-    - Show how to use the coveralls id option (or whatever it is called) with kcov
-- If you have any questions, please don't hesitate to contact me (link to contact) or create an issue (link to website issues) for any problems or typos in this guide
-
-**TODO:**
-
-* Spell check
-* Change tutorial or article to guide
-
+For questions about or problems with Rust code coverage, use the
+[Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
+If you find a problem with this guide, please open a
+[new issue][website-issues].
 
 [old-tutorial]: https://users.rust-lang.org/t/tutorial-how-to-collect-test-coverages-for-rust-project/650
 [contact]: /contact
