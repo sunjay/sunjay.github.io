@@ -25,3 +25,5 @@ permalink: /:year/:month/:day/:title
 # Plugins
 gems:
   - jekyll-paginate
+  - jekyll-sitemap
+
