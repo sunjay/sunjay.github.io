@@ -8,7 +8,7 @@ categories:
   - Programming
 ---
 
-**Last Updated:** July 25, 2016
+**Last Updated:** July 29, 2016
 
 For questions about or problems with Rust code coverage, use the
 [Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
@@ -229,6 +229,12 @@ you will need to upload.
 
 ## Travis CI Integration
 
+***Update (July 29, 2016):** As pointed out in [#1][website#1], there is a
+script called [travis-cargo][travis-cargo] that handles Travis and
+Coveralls integration for you. The Travis configuration you would use to
+integrate that is similar to the one below except that it has the kcov
+installation details hidden behind the script.*
+
 These instructions are specific to Travis CI, but should be ubiquitous enough
 to translate to any CI provider. We essentially need to take the above
 instructions and translate them into a Travis CI configuration.
@@ -425,6 +431,13 @@ In the configuration above, this is included after building and running
 kcov. **You do not need to add this line again if you are using the
 Travis CI configuration above.**
 
+***Update (July 29, 2016):** As pointed out in [#1][website#1], there is a
+script called [travis-cargo][travis-cargo] that handles Travis and
+Coveralls integration for you. Using Codecov with the configuration provided
+by the travis-cargo documentation should be exactly the same. Just add
+the line above to the `after_success:` section provided in their example
+configuration.*
+
 This loads and runs a script that automatically finds and uploads coverage
 data to Codecov from a Travis CI machine. Only the `cobertura.xml` files
 that kcov generates should be uploaded.
@@ -512,4 +525,6 @@ If you find a problem with this guide, please open a
 [lion-codecov]: https://codecov.io/gh/sunjay/lion
 [lion-uploaded-coverage]: https://travis-ci.org/sunjay/lion/builds/143150785#L689
 [codecov-uploader-src]: https://github.com/codecov/codecov-bash
+[website#1]: https://github.com/sunjay/sunjay.github.io/issues/1
+[travis-cargo]: https://github.com/huonw/travis-cargo
 
