@@ -3,7 +3,7 @@
 <input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
 
 <!-- Toggleable sidebar -->
-<div class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-item">
     <p><strong>{{ site.title }}</strong></p>
   </div>
@@ -11,13 +11,25 @@
   <nav class="sidebar-nav">
     {% include sidebar-item.html title="Home" url="/" %}
     {% include sidebar-item.html title="Blog" url="/blog/" %}
+    {% include sidebar-item.html title="GitHub" url="https://github.com/sunjay/" %}
     {% include sidebar-item.html title="Resume" url="/resume" %}
     {% include sidebar-item.html title="Contact" url="/contact" %}
   </nav>
+
+  <div class="sidebar-spacer"></div>
+
+  <div class="sidebar-nav">
+      <a class="sidebar-nav-item" target="_blank" href="https://github.com/sunjay/sunjay.github.io">
+        This website is open source
+      </a>
+      <a class="sidebar-nav-item" target="_blank" href="https://github.com/sunjay/sunjay.github.io/issues">
+        Report a problem
+      </a>
+  </div>
 
   <div class="sidebar-item">
     <p>
       &copy; {{ site.time | date: '%Y' }}. All rights reserved.
     </p>
   </div>
-</div>
+</aside>

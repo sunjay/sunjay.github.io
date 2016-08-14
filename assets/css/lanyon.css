@@ -217,6 +217,9 @@ a.highlighted {
   font-weight: normal;
   color: #fff;
 }
+.sidebar-spacer {
+  padding-top: 1rem;
+}
 .sidebar-item {
   padding: 1rem;
 }
