@@ -93,6 +93,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.highlight {
+  overflow-x: auto;
+  word-wrap: normal;
+  white-space: pre;
+}
+
 .highlighted {
   background-color: #FAFF69;
   color: inherit;
