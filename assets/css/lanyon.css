@@ -306,6 +306,20 @@ a.sidebar-nav-item:focus {
   }
 }
 
+/* Footer
+ *
+ */
+
+footer {
+  font-size: 80%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+footer a {
+  color: inherit;
+}
+
 /* Slide effect
  *
  * Handle the sliding effects of the sidebar and content in one spot, seperate
