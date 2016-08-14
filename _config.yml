@@ -15,7 +15,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://sunjay.ca" # the base hostname & protocol for your site
 
 # Pagination of blog
-paginate: 5
+paginate: 10
 paginate_path: "/blog/:num/"
 
 # Build settings
