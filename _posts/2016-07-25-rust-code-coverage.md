@@ -8,7 +8,7 @@ categories:
   - Programming
 ---
 
-**Last Updated:** July 29, 2016
+**Last Updated:** September 25, 2016
 
 For questions about or problems with Rust code coverage, use the
 [Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
@@ -488,6 +488,36 @@ Make sure you delete the Codecov specific line if you are using the
 Travis CI configuration above with Coveralls. See the *Codecov Integration*
 section for more details about which part is Codecov specific.
 
+## Docker Security Settings
+
+***Update (September 25, 2016):** This additional section was added thanks to a contribution
+by [Ragnaroek][ragnaroek-github]. He emailed me when he ran into this issue on Docker.
+I added this section since it may be a useful tip for anyone who sets up kcov on Docker.
+See his [GitHub issue][docker-security-settings-issue] for the original
+problem description and discussion.*
+
+Docker users may run into the following error message when executing kcov on a Rust executable
+on a Docker image.
+
+```
+kcov --exclude-pattern=/.cargo,/usr/lib --verify target/cov target/debug/<executable name>
+Can't set personality: Operation not permitted
+kcov: error: Can't start/attach to target/debug/<executable name>
+Child hasn't stopped: ff00
+kcov: error: Can't start/attach to target/debug/<executable name>
+```
+
+This happens because kcov uses the personality syscall to be able to run
+PIE executables without address space randomization ([source][personality-syscall-source]).
+Docker disables `personality()`.
+
+The [fix][docker-security-fix] is to update the docker security settings
+using this command:
+
+```
+docker run -it --rm --security-opt seccomp=unconfined -v $(pwd):/source kcov
+```
+
 ## Wrapping Up
 
 You should now have the necessary tools and knowledge to:
@@ -527,4 +557,7 @@ If you find a problem with this guide, please open a
 [codecov-uploader-src]: https://github.com/codecov/codecov-bash
 [website#1]: https://github.com/sunjay/sunjay.github.io/issues/1
 [travis-cargo]: https://github.com/huonw/travis-cargo
-
+[ragnaroek-github]: https://github.com/Ragnaroek
+[docker-security-settings-issue]: https://github.com/SimonKagstrom/kcov/issues/151
+[personality-syscall-source]: https://github.com/SimonKagstrom/kcov/issues/151#issuecomment-248845453
+[docker-security-fix]: https://github.com/SimonKagstrom/kcov/issues/151#issuecomment-249284631
