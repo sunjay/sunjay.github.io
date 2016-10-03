@@ -8,7 +8,7 @@ categories:
   - Programming
 ---
 
-**Last Updated:** [TODO](){: .highlighted}
+**Last Updated:** October 2, 2016
 
 For questions about or problems with Rust code coverage, use the
 [Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
@@ -72,7 +72,7 @@ kcov using your package manager and skip the *Manually Compiling kcov* section
 entirely. Earlier versions of kcov may also work, but I have only verified
 kcov 31.
 
-***Update ([TODO](){: .highlighted}):** Thanks to a contribution
+***Update (October 2, 2016):** Thanks to a contribution
 by [Ragnaroek][ragnaroek-github] there is now a third way to get kcov in addition
 to using apt or manually compiling. If you are using [Docker][docker], he
 has provided a section below which describes exactly how to use kcov from
@@ -136,31 +136,39 @@ working with Rust executables.
 
 ## Using kcov From Docker
 
-***Update ([TODO](){: .highlighted}):** This additional section was contributed
+***Update (October 2, 2016):** This additional section was contributed
 by [Ragnaroek][ragnaroek-github]. Thanks to him, there is now an easy way for
 Docker users to setup kcov without going through all of the steps above.*
 
-You need to pull the image first from the dockerhub (assuming you have docker already installed):
+This section assumes you have at least a basic familiarity with [Docker][docker].
+If not, the [Docker documentation][docker-docs] is a great place to start. Make
+sure you have Docker installed before you begin.
+
+To use kcov from Docker, pull the [kcov image from DockerHub][kcov-dockerhub]:
+
 ```
 docker pull ragnaroek/kcov:<version>
 ```
-where `<version>` is the kcov version tag as published on the github account.
+
+where `<version>` is the kcov version tag (e.g. `v31`) as published in the
+[Ragnaroek/kcov_docker][kcov-docker-github] GitHub repository.
 The docker images are provided starting from version v31.
 
 If you pulled the image you can run kcov from the image with:
+
 ```
 docker run --security-opt seccomp=unconfined -v $(pwd):/source kcov:v31 <kcov-commands>
 ```
 
-In `<kcov-commands>` you can provide your commands to the kcov binary. kcov is
- automatically executed in the image.
+Use `<kcov-commands>` to provide arguments to the kcov binary. kcov is
+automatically executed in the image.
 
-Note: The `--security-opt seccomp=unconfined` is pretty important. Without it
+**Note:** The `--security-opt seccomp=unconfined` is important. Without it
 docker will not allow the `personality` call that kcov executes.
 
 You can also build your own custom kcov image, maybe with a non-released beta version
-or with your own dependencies installed. A detailed instruction is provided
-on the [kcov_docker github account](https://github.com/Ragnaroek/kcov_docker)
+or with your own dependencies installed. Detailed instructions are provided
+in the [Ragnaroek/kcov_docker][kcov-docker-github] GitHub repository.
 
 ## Collecting Coverage Data
 kcov runs your test executables and then outputs a report showing
@@ -596,3 +604,6 @@ If you find a problem with this guide, please open a
 [personality-syscall-source]: https://github.com/SimonKagstrom/kcov/issues/151#issuecomment-248845453
 [docker-security-fix]: https://github.com/SimonKagstrom/kcov/issues/151#issuecomment-249284631
 [docker]: https://www.docker.com/
+[docker-docs]: https://docs.docker.com/engine/understanding-docker/
+[kcov-docker-github]: https://github.com/Ragnaroek/kcov_docker
+[kcov-dockerhub]: https://hub.docker.com/r/ragnaroek/kcov/
