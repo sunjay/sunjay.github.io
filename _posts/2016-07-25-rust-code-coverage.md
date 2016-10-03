@@ -140,8 +140,27 @@ working with Rust executables.
 by [Ragnaroek][ragnaroek-github]. Thanks to him, there is now an easy way for
 Docker users to setup kcov without going through all of the steps above.*
 
-TODO: Write your section here! :D
-{: .highlighted}
+You need to pull the image first from the dockerhub (assuming you have docker already installed):
+```
+docker pull ragnaroek/kcov:<version>
+```
+where `<version>` is the kcov version tag as published on the github account.
+The docker images are provided starting from version v31.
+
+If you pulled the image you can run kcov from the image with:
+```
+docker run --security-opt seccomp=unconfined -v $(pwd):/source kcov:v31 <kcov-commands>
+```
+
+In `<kcov-commands>` you can provide your commands to the kcov binary. kcov is
+ automatically executed in the image.
+
+Note: The `--security-opt seccomp=unconfined` is pretty important. Without it
+docker will not allow the `personality` call that kcov executes.
+
+You can also build your own custom kcov image, maybe with a non-released beta version
+or with your own dependencies installed. A detailed instruction is provided
+on the [kcov_docker github account](https://github.com/Ragnaroek/kcov_docker)
 
 ## Collecting Coverage Data
 kcov runs your test executables and then outputs a report showing
