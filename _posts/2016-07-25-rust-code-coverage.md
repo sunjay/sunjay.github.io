@@ -8,7 +8,7 @@ categories:
   - Programming
 ---
 
-**Last Updated:** October 2, 2016
+**Last Updated:** October 31, 2016
 
 For questions about or problems with Rust code coverage, use the
 [Rust IRC channels][rust-irc], StackOverflow or [contact][contact] me.
@@ -98,7 +98,7 @@ an error message instead of a version, your kcov version is too old.
 Install the dependencies for kcov:
 
 ```bash
-sudo apt-get install libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev
+sudo apt-get install libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev zlib1g-dev
 ```
 
 In the [original Rust code coverage tutorial][old-tutorial]{: rel="nofollow" target="_blank"},
@@ -106,6 +106,9 @@ only `libcurl4-openssl-dev`, `libelf-dev`, `libdw-dev`,
 `cmake`, and `gcc` were required. However,
 [shortly after that was published][kcov-additional-deps],
 kcov added `binutils` and `libiberty` as dependencies as well.
+
+***Update (October 31, 2016):** As pointed out in [#3][website#3], `zlib1g-dev`
+was added as dependency in [this commit][kcov-additional-deps-zlib1g-dev].*
 
 The new dependencies allow you to run kcov with the `--verify`
 option as shown below.
@@ -585,6 +588,7 @@ If you find a problem with this guide, please open a
 [coveralls]: https://coveralls.io/
 [kcov-inaccurate]: http://stackoverflow.com/questions/32521800/why-does-kcov-calculate-incorrect-code-coverage-statistics-for-rust-programs
 [kcov-additional-deps]: https://github.com/SimonKagstrom/kcov/commit/fd52edb836467e768eb6cd7567f0e38e14a62f18
+[kcov-additional-deps-zlib1g-dev]: https://github.com/SimonKagstrom/kcov/commit/187fc7cb4fb43157b1634d4b3430a9a9a3c49033
 [kcov-uncommon-options]: https://github.com/SimonKagstrom/kcov/blob/34cb463aa974f45a9744cc4dbe3861a440b9ccd8/src/configuration.cc#L607
 [travis-ci]: https://travis-ci.org/
 [travis-ci-caching]: https://docs.travis-ci.com/user/caching/#Caching-directories-(Bundler%2C-dependencies)
@@ -598,6 +602,7 @@ If you find a problem with this guide, please open a
 [lion-uploaded-coverage]: https://travis-ci.org/sunjay/lion/builds/143150785#L689
 [codecov-uploader-src]: https://github.com/codecov/codecov-bash
 [website#1]: https://github.com/sunjay/sunjay.github.io/issues/1
+[website#3]: https://github.com/sunjay/sunjay.github.io/issues/3
 [travis-cargo]: https://github.com/huonw/travis-cargo
 [ragnaroek-github]: https://github.com/Ragnaroek
 [docker-security-settings-issue]: https://github.com/SimonKagstrom/kcov/issues/151
