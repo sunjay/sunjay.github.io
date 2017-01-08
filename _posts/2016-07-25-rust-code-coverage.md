@@ -184,7 +184,7 @@ cargo test --no-run
 ```
 
 The compiled binaries are placed in `target/debug`. Cargo may create multiple
-test executables if you have multiple binaries.
+test executables if you have multiple binaries. Note that Cargo will postfix the test binary names with a hash, e.g. `<executable name>-012954d6a8535cff`, so make sure to pick the latest of these binaries for the next step.
 
 To run your tests and collect coverage, run kcov with the following command:
 
