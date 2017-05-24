@@ -6,6 +6,8 @@ excerpt: "A comprehensive guide to generating code coverage for Rust projects, i
 subreddit: /r/rust
 categories:
   - Programming
+redirect_from:
+  - /rust-code-coverage
 ---
 
 **Last Updated:** October 31, 2016

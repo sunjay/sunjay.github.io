@@ -26,4 +26,4 @@ permalink: /:year/:month/:day/:title
 gems:
   - jekyll-paginate
   - jekyll-sitemap
-
+  - jekyll-redirect-from
