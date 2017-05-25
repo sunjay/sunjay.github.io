@@ -1,4 +1,4 @@
-[Resume](/resume) &middot; [GitHub](https://github.com/sunjay/)
+[Resume](/resume) &middot; [GitHub](https://github.com/sunjay/) &middot; [Contact](/contact)
 
 ![Sunjay Varma](/assets/images/me.png){: .right} My name is Sunjay Varma. I am a
 highly experienced software developer and future software engineer currently
@@ -25,5 +25,3 @@ because I can build anything with software. From small interfaces to entire
 universes, I can make it all.
 
 Let's build something amazing.
-
-[Contact me](/contact)
