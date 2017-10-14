@@ -1,27 +1,37 @@
-[Resume](/resume) &middot; [GitHub](https://github.com/sunjay/) &middot; [Contact](/contact)
+[Resume](/resume) &middot; [GitHub] &middot; [Twitter] &middot; [Contact](/contact)
 
 ![Sunjay Varma](/assets/images/me.png){: .right} My name is Sunjay Varma. I am a
-highly experienced software developer and future software engineer currently
-studying at the University of Waterloo.
+highly experienced software developer who has been writing code for over a
+decade. My skills have been refined by over 3 years of professional experience.
+I have designed entire systems of software, led developers to implement them,
+and worked with others to improve the systems as they grew.
 
-What sets me apart from other software developers is my breadth of software
-development experience, ability to quickly pick up on *any* new technology and
-the little details I see that other developers may not.
+I actively contribute to open source and explore a number of different areas in
+my personal projects. As a result, I have written a [compiler][brain], [a fast
+interpreter][brainfuck] for a small language, and even [an image editor][rhino].
+Besides those projects, I have also created a [library to help teach beginners
+how to code][turtle] in Rust, contributed to other libraries, and provided new
+features and bug fixes for tools I use in my own development. Most recently, I
+also started contributing code to the [Rust compiler][rustc]. See my [GitHub]
+profile for more on my projects and contributions.
 
-I love solving interesting problems and tackling them using software.
+One way I share programming with people is by teaching it to as many people as I
+can. Over the last decade since I started programming, I have written many
+online tutorials and in depth blog posts. Not only does this help me deepen my
+own knowledge, it also allows me to share what I learn with other people. You
+can often find me in online forums or StackOverflow helping people learn
+programming and find solutions to their problems.
 
-There are lots of detail oriented people out there, but I take it to another
-level entirely. I use the skills I have developed to find the details that
-matter the most.
+![Many languages](/assets/images/languages.png){: .left} I have explored many
+different programming languages including Rust, Python, JavaScript, Haskell, C,
+C++ and more. Learning so many programming languages has taught me many
+different paradigms and programming techniques. I find that there is a lot I can
+learn by considering a variety of sources and methodologies.
 
-![Many languages](/assets/images/languages.png){: .left}
-
-I know I can pick up *any* technology very quickly because I do it all the time.
-I learn new programming languages for fun and pick up new frameworks on the go
-at work and on my own as well.
-
-I have been writing software for over 9 years. It is my favorite thing to do
-because I can build anything with software. From small interfaces to entire
-universes, I can make it all.
-
-Let's build something amazing.
+[GitHub]: https://github.com/sunjay/
+[Twitter]: https://twitter.com/sunjay03/
+[brain]: https://github.com/brain-lang/brain
+[brainfuck]: https://github.com/brain-lang/brainfuck
+[rhino]: https://github.com/RhinoEditor/rhino
+[rustc]: https://github.com/rust-lang/rust
+[turtle]: https://github.com/sunjay/turtle
