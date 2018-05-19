@@ -22,6 +22,9 @@ paginate_path: "/blog/:num/"
 markdown: kramdown
 permalink: /:year/:month/:day/:title
 
+include:
+  - .well-known
+
 # Plugins
 gems:
   - jekyll-paginate

@@ -1,0 +1,4 @@
+This is a Brave Payments publisher verification file.
+
+Domain: sunjay.ca
+Token: 3527402e45088f616aeff2a15be551a3970b54b097fe8ad4e66c017f29934be6
