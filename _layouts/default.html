@@ -1,58 +1,20 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
 
-  {% include head.html %}
+  {%- include head.html -%}
 
-  <body class="theme-base-0a">
+  <body>
 
-    {% include sidebar.html %}
+    {%- include header.html -%}
 
-    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
-         content to avoid any CSS collisions with our real content. -->
-    <div class="wrap">
-      <header class="masthead">
-        <div class="container">
-          <h3 class="masthead-title">
-            <a href="{{ site.baseurl }}/" title="Home">{{ site.title }}</a>
-            <small>{{ site.tagline }}</small>
-          </h3>
-        </div>
-      </header>
-
-      <main class="container content">
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
         {{ content }}
-      </main>
+      </div>
+    </main>
 
-      <footer>
-        <a target="_blank" href="https://github.com/sunjay/sunjay.github.io">this website is open source</a>
-        <br />
-        <a target="_blank" href="https://github.com/sunjay/sunjay.github.io/issues">open an issue</a>
-        <br />
-        <br />
-        <p>&copy; {{ site.time | date: '%Y' }}. All rights reserved.</p>
-      </footer>
-    </div>
+    {%- include footer.html -%}
 
-    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
-
-    <script>
-      (function(document) {
-        var toggle = document.querySelector('.sidebar-toggle');
-        var sidebar = document.querySelector('#sidebar');
-        var checkbox = document.querySelector('#sidebar-checkbox');
-
-        document.addEventListener('click', function(e) {
-          var target = e.target;
-
-          if(!checkbox.checked ||
-             sidebar.contains(target) ||
-             (target === checkbox || target === toggle)) return;
-
-          checkbox.checked = false;
-        }, false);
-      })(document);
-    </script>
-
-    {% include analytics.html %}
   </body>
+
 </html>

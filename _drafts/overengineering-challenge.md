@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Overengineering Challenge: Displaying a Simple Page with as Many Steps as Possible"
-author: sunjay
+author: Sunjay Varma
 categories:
   - Programming
 ---

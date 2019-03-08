@@ -1,3 +1,8 @@
+---
+layout: home
+title: Home
+---
+
 [Resume](/resume) &middot; [GitHub] &middot; [Twitter] &middot; [Contact](/contact)
 
 ![Sunjay Varma](/assets/images/me.png){: .right} My name is Sunjay Varma. I am a

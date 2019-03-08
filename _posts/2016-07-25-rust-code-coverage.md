@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Rust Code Coverage Guide: kcov + Travis CI + Codecov / Coveralls"
-author: sunjay
+author: Sunjay Varma
 excerpt: "A comprehensive guide to generating code coverage for Rust projects, integrating that into Travis CI and publishing the results to either Codecov or Coveralls."
 subreddit: /r/rust
 categories:

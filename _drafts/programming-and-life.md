@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Things Programming Can Teach You About Life
-author: sunjay
+author: Sunjay Varma
 categories:
   - Life
 ---

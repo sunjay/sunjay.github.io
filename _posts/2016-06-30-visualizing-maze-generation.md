@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Visualizing Maze Generation
-author: sunjay
+author: Sunjay Varma
 subreddit: /r/coding
 categories:
   - Programming
@@ -117,7 +117,6 @@ are welcome, so feel free to [fork me on GitHub][sourcecode]. If you find
 any bugs or have a great idea for an additional feature, please let me know
 by opening an [issue][issues].
 
-[livesite]: http://sunjay.ca/maze-generator
+[livesite]: http://sunjay.dev/maze-generator
 [sourcecode]: https://github.com/sunjay/maze-generator
 [issues]: https://github.com/sunjay/maze-generator/issues
-

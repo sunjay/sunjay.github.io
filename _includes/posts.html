@@ -1,17 +1,25 @@
-<div class="posts">
-  {% for post in include.posts %}
-  <div class="post">
-    <span class="post-title">
-      <a href="{{ site.baseurl }}{{ post.url }}">
-        {{ post.title }}
-      </a>
-    </span>
+{%- if include.posts.size > 0 -%}
+  <h2 class="post-list-heading">{{ list_title }}</h2>
+  <ul class="post-list">
+    {%- for post in include.posts -%}
+    <li>
+      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+      <span class="post-meta">{{ post.date | date: date_format }}</span>
+      <h3>
+        <a class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | escape }}
+        </a>
+      </h3>
+      {%- if include.show_excerpts -%}
+        {{ post.excerpt | strip_html | strip_newlines | truncate: 160 }}
+      {%- endif -%}
+    </li>
+    {%- endfor -%}
+  </ul>
 
-    <span class="post-date">{{ post.date | date_to_string }}</span>
+  {%- if include.see_more -%}
+  <p class="see-more"><a href="/blog/">More &rarr;</a></p>
+  {%- endif -%}
 
-    {{ post.excerpt | strip_html | strip_newlines | truncate: 160 }}
-
-  </div>
-  {% endfor %}
-</div>
-
+  <p class="feed-subscribe"><svg class="svg-icon orange"><use xlink:href="{{ '/assets/minima-social-icons.svg#rss' | relative_url }}"></use></svg><a href="{{ "/feed.xml" | relative_url }}">Subscribe</a></p>
+{%- endif -%}

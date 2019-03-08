@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Currying Functions in ES6
-author: sunjay
+author: Sunjay Varma
 categories:
   - Programming
 ---

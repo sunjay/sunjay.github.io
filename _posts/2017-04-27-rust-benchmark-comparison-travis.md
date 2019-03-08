@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using Travis CI to Compare Rust Benchmarks
-author: sunjay
+author: Sunjay Varma
 subreddit: /r/rust
 categories:
   - Programming

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Starting From Scratch
-author: sunjay
+author: Sunjay Varma
 categories:
   - Meta
 ---
@@ -17,4 +17,3 @@ I recently decided to move my blog from a self-hosted WordPress site to a GitHub
 3. Easier publishing workflow - this goes back to having complete flexibility. My website is very simple, but sometimes I wish I could do more complicated things in the frontend. With a GitHub pages blog I can work in plain HTML, CSS and JavaScript. That makes it really easy to customize everything and make it my own. I am a well qualified web developer.
 
 You can still do everything you could do previously on my old website. I have a [Contact](/contact) form if you need to contact me about something.
-

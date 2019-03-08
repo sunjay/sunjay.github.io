@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Modelling Mazes as a Tree of Paths
-author: sunjay
+author: Sunjay Varma
 categories:
   - Programming
 ---
@@ -53,7 +53,6 @@ the tree? How do you fill it with randomly generated paths? This is not just any
 
 
 [prevpost]: /2016/06/30/visualizing-maze-generation
-[livesite]: http://sunjay.ca/maze-generator
+[livesite]: http://sunjay.dev/maze-generator
 [sourcecode]: https://github.com/sunjay/maze-generator
 [issues]: https://github.com/sunjay/maze-generator/issues
-

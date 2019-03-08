@@ -1,7 +1,7 @@
 ---
 layout: post
 title: <POST TITLE>
-author: sunjay
+author: Sunjay Varma
 subreddit: /r/<TARGET SUBREDDIT>
 categories:
   - Programming

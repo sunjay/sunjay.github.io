@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Solving Mazes
-author: sunjay
+author: Sunjay Varma
 categories:
   - Programming
 ---
