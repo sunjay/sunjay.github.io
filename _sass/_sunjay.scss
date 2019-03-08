@@ -34,3 +34,38 @@
   margin-top: 20px;
   text-align: center;
 }
+
+.site-title {
+  display: block;
+  padding-right: 0;
+  text-align: center;
+  width: 100%;
+
+  @media screen and (min-width: $on-medium) {
+    text-align: left;
+    display: inline;
+    width: auto;
+  }
+}
+
+.site-nav.custom {
+  align-items: stretch;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  position: static;
+  text-align: center;
+  width: 100%;
+
+  .page-link {
+    display: inline;
+    flex-grow: 1;
+    margin-left: 0;
+  }
+
+  @media screen and (min-width: $on-medium) {
+    display: unset;
+    width: auto;
+  }
+}
