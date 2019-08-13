@@ -44,6 +44,9 @@ markdown: kramdown
 theme: minima
 permalink: /:year/:month/:day/:title
 
+plugins:
+  - jekyll-feed
+
 include:
   - .well-known
 
