@@ -31,8 +31,6 @@ google_analytics: "UA-22315778-1"
 
 header_pages:
   - blog/index.md
-  - title: Resume
-    url: https://sunjay.dev/resume/
   - title: GitHub
     url: https://github.com/sunjay/
   - title: Twitter
