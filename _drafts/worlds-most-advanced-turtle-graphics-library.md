@@ -184,15 +184,27 @@ rewrote the crate to spawn its own process (thus providing two main threads).
 This solved the problem, and was the right solution at the time, but because I
 was in a hurry, I cut a lot of corners that would need to be resolved later:
 
-* used JSON sent between processes using stdin and stdout (slow, lots of parsing
-  overhead, but easy to test and debug)
-* always sent and recieved entire state (e.g. updating the turtle's pen required
+* For IPC (Inter-Process Communication), sent JSON between the two processes
+  over stdin and stdout (slow, lots of parsing overhead, but easy to test and
+  debug)
+* To animate the lines as they were being drawn, one of the processes
+  continuously re-sent the updated line over and over again 60 times per second
+  (wasteful, requires constant communication between the processes, but very
+  easy to implement)
+* Always sent and recieved entire state (e.g. updating the turtle's pen required
   requesting the entire turtle state, updating the pen property, and then sending
-  that entire state back)
-* full image is always redrawn, even if nothing has changed (resulted in 100%
-  CPU usage even when nothing was happening)
-* all code assumed that there was only a single turtle in existence
-* TODO
+  the entire state back)
+* Full image was always redrawn, even if nothing had changed (resulted in [100%
+  CPU usage][cpu-usage] even when nothing was happening)
+* No concept of more than one turtle (all code assumed that there was only a
+  single turtle in existence)
+
+The [new new architecture][turtle-rewrite-pr] addresses all of these issues and
+more. It is designed to be as efficient as possible by reducing time spent in
+bottlenecks like IPC and rendering.
+
+TODO: "Overview" from #173 + whatever details are necessary to show that all of
+the above was addressed
 
 ## Asynchronous Turtles
 
@@ -211,9 +223,10 @@ TODO
 [Python turtle module]: https://docs.python.org/3/library/turtle.html
 [`set_pen_color` method]: https://docs.rs/turtle/1.0.0-rc.3/turtle/struct.Turtle.html#method.set_pen_color
 [async-book]: https://rust-lang.github.io/async-book/01_getting_started/02_why_async.html
-[turtle-rewrite-2017]: https://github.com/sunjay/turtle/pull/31
 [turtle-rewrite-pr]: https://github.com/sunjay/turtle/pull/173
 [RustConf 2018 talk]: https://youtu.be/Sak6-O1cvgU
+[turtle-rewrite-2017]: https://github.com/sunjay/turtle/pull/31
+[cpu-usage]: https://github.com/sunjay/turtle/issues/99
 
 # Outline
 
