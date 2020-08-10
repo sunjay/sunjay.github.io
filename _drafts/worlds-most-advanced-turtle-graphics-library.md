@@ -28,6 +28,10 @@ complicated example of drawing a snowman:
 The source code for this [snowman example] and for the previous [circle example]
 can be found on GitHub.
 
+## Table of Contents
+
+* TODO
+
 ## A Tool for Learning Programming
 
 The concept of [Turtle Graphics] comes from the [Logo programming language], an
@@ -120,7 +124,7 @@ programming.
 The turtle crate has been in development for just over 3 years. The first commit
 was on Aug 5, 2017.
 
-![snowman](/assets/images/worlds-most-advanced-turtle-graphics-library/commit-freq.png)
+![turtle commit frequency](/assets/images/worlds-most-advanced-turtle-graphics-library/commit-freq.png)
 
 The basic functionality that you saw above was completed very early in the
 development of the library. You can already use the crate right now to draw all
@@ -158,7 +162,45 @@ almost no one uses yet:
 <blockquote class="twitter-tweet tw-align-center"><p lang="en" dir="ltr">me: writes the world&#39;s most advanced turtle graphics library<br><br>world: why...?<br><br>me: idk thought it&#39;d be cool<br><br>world: idc tho<br><br>me: 😬 <a href="https://t.co/Rizr0cBuWI">https://t.co/Rizr0cBuWI</a></p>&mdash; Sunjay (@Sunjay03) <a href="https://twitter.com/Sunjay03/status/1258830909488402432?ref_src=twsrc%5Etfw">May 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 Hopefully everything I've said above is more than enough explanation about why
-this work is important and why I'm still excited about it 3 years later.
+this work is important and why I'm still excited about it 3 years later. The
+rest of this blog post is about the new architecture and how it makes it
+possible to have features like multiple turtles and async support.
+
+## The New New Architecture
+
+If you saw my [RustConf 2018 talk] on the turtle crate, you'll know that in
+December of 2017, I [rewrote the turtle crate][turtle-rewrite-2017] to use a new two-process
+architecture. The inital version of the crate had been written on Linux using a
+two-thread model: one thread for managing the window and one thread for
+communicating with it using commands like `forward`, `right`, etc.
+Unfortunately, the windowing APIs on MacOS are not thread-safe. You need to use
+them on the main thread (the thread where `main` is run) or your program will
+not work.
+
+[![turtle commit frequency](/assets/images/worlds-most-advanced-turtle-graphics-library/macos-github-issue.png){: .figure-small}](https://github.com/sunjay/turtle/issues/27){: target="_blank"}
+
+Not wanting to compromise on the simple API I was aiming to produce, I quickly
+rewrote the crate to spawn its own process (thus providing two main threads).
+This solved the problem, and was the right solution at the time, but because I
+was in a hurry, I cut a lot of corners that would need to be resolved later:
+
+* used JSON sent between processes using stdin and stdout (slow, lots of parsing
+  overhead, but easy to test and debug)
+* always sent and recieved entire state (e.g. updating the turtle's pen required
+  requesting the entire turtle state, updating the pen property, and then sending
+  that entire state back)
+* full image is always redrawn, even if nothing has changed (resulted in 100%
+  CPU usage even when nothing was happening)
+* all code assumed that there was only a single turtle in existence
+* TODO
+
+## Asynchronous Turtles
+
+TODO
+
+## Multiple Turtles
+
+TODO
 
 [rust]: https://www.rust-lang.org/
 [turtle]: https://turtle.rs
@@ -169,7 +211,9 @@ this work is important and why I'm still excited about it 3 years later.
 [Python turtle module]: https://docs.python.org/3/library/turtle.html
 [`set_pen_color` method]: https://docs.rs/turtle/1.0.0-rc.3/turtle/struct.Turtle.html#method.set_pen_color
 [async-book]: https://rust-lang.github.io/async-book/01_getting_started/02_why_async.html
+[turtle-rewrite-2017]: https://github.com/sunjay/turtle/pull/31
 [turtle-rewrite-pr]: https://github.com/sunjay/turtle/pull/173
+[RustConf 2018 talk]: https://youtu.be/Sak6-O1cvgU
 
 # Outline
 
@@ -206,8 +250,12 @@ this work is important and why I'm still excited about it 3 years later.
     the primitives available, not invent a new data structure
   * Go over `AccessControl`
   * Mention that other solutions that are potentially simpler are welcome!
-* Justify breaking changes
+* (optional) Justify breaking changes
   * `drawing_mut` violates Rust's borrowing rules if you enable multiple turtles
+  * Violates the philosophy mentioned earlier about avoiding teaching bad habits
+    or false assumptions
+* (optional) Talk about how we got to 0% CPU usage
+* (optional) Talk about how we got instant speed to be fast (compile in release mode lol)
 * Acknowledgements
   * Tokio team and Alice particularly
   * Eliza, Manish, Alex (and anyone else who helped me design `AccessControl`)
@@ -217,3 +265,7 @@ this work is important and why I'm still excited about it 3 years later.
   * Document `AsyncTurtle` and `AsyncDrawing`
   * Have more people try out the APIs to see what they can do
   * Road to v1.0
+* Wrap up
+  * Use the crate and send tweets to @RustTurtle with what you create
+  * Read the guide
+  * Come join Zulip
