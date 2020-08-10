@@ -9,7 +9,147 @@ categories:
   - Rust
 ---
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">me: writes the world&#39;s most advanced turtle graphics library<br><br>world: why...?<br><br>me: idk thought it&#39;d be cool<br><br>world: idc tho<br><br>me: 😬 <a href="https://t.co/Rizr0cBuWI">https://t.co/Rizr0cBuWI</a></p>&mdash; Sunjay (@Sunjay03) <a href="https://twitter.com/Sunjay03/status/1258830909488402432?ref_src=twsrc%5Etfw">May 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+I created and maintain a library for the [Rust programming language][rust]
+called [turtle]. The turtle library (or "crate" in Rust terminology) is an
+implementation of [Turtle Graphics]. The idea is that you have a triangular
+cursor in the center of your screen (the "turtle") which you can control using
+simple commands like "go forward 100 steps" or "turn right 90 degrees". The
+turtle draws a line as it walks, so you can use this to create animated
+drawings. For example, here's a circle created by walking 1 step forward and
+then turning 1 degree to the right 360 times.
+
+![circle](/assets/images/worlds-most-advanced-turtle-graphics-library/circle.gif){: .figure-border .figure-small}
+
+Perhaps surprisingly, this concept scales quite well. Here's a more
+complicated example of drawing a snowman:
+
+![snowman](/assets/images/worlds-most-advanced-turtle-graphics-library/snowman.gif){: .figure-border .figure-small}
+
+The source code for this [snowman example] and for the previous [circle example]
+can be found on GitHub.
+
+## A Tool for Learning Programming
+
+The concept of [Turtle Graphics] comes from the [Logo programming language], an
+educational language designed in 1967 to control an actual robot that could draw
+simple pictures. These days, many programming languages offer some kind of
+implementation of Turtle Graphics. For example, the [Python turtle module] is
+very commonly used when demonstrating Python to first time users or young
+children. It's often way more engaging to see the computer draw a picture than
+to just learn how to print and manipulate text.
+
+In Python, you can draw a circle like the one above using the following program:
+
+```py
+from turtle import fd, rt
+
+for i in range(360):
+    fd(1)
+    rt(1)
+```
+
+In Rust, the equivalent program looks like this:
+
+```rust
+use turtle::Turtle;
+
+fn main() {
+    let mut turtle = Turtle::new();
+
+    for _ in 0..360 {
+        turtle.forward(3.0);
+        turtle.right(1.0);
+    }
+}
+```
+
+As you can see, other than a few extra lines and some slightly more descriptive
+names, the Rust program is almost exactly the same as the Python program.
+
+This is on purpose. I made many decisions about the API to ensure that this
+crate is an excellent tool for teaching Rust. For example, to make sure it is
+easy to learn, the API is largely the same as the Python turtle module. The
+names follow Rust naming conventions, but are still just as easy to use thanks
+to Rust's very flexible type system. The [`set_pen_color` method] in the code
+below takes a string as a color name (similar to the Python turtle module), but
+also allows you to create a `Color` type and pass that in.
+
+```rust
+use turtle::{Turtle, Color};
+
+fn main() {
+    let mut turtle = Turtle::new();
+
+    // These two lines are equivalent
+    turtle.set_pen_color("red");
+    turtle.set_pen_color(Color {
+        red: 255.0,
+        blue: 0.0,
+        green: 0.0,
+        alpha: 1.0,
+    });
+}
+```
+
+I even occasionally deviate from the Python API to keep things idiomatic Rust.
+For example, instead of using global mutable state to allow for free functions
+like Python's `fd` and `rt`, you need to create a variable to hold the `Turtle`
+type and pass that through your program. All of this is based on the philosophy
+that the turtle crate wouldn't be as useful of a tool if it taught people bad
+habits or false assumptions that don't reflect real Rust code. This is a
+difficult line to walk, so we do compromise here and there, but overall I think
+we have done a good job of balancing these concerns.
+
+The turtle crate is designed to provide a ramp up to Rust's more advanced
+features. You can start with the most basic: declaring variables, calling
+methods, using loops, etc. Then, you can build into creating functions and maybe
+even teach them what `&mut Turtle` means if they are ready for that. Most of the
+API doesn't use things like `Option` and `Result` so you can put off teaching
+those until after people have gotten more comfortable with types. After that,
+you can start to use the more advanced APIs of the crate like the events API to
+teach things like pattern matching and exhaustiveness. I could go on from there,
+but the main point is that turtle is intentionally designed to allow people to
+mostly use their intuition to get things to work. They can then learn more
+advanced ideas as they get comfortable programming.
+
+## Three Years of Development
+
+The turtle crate has been in development for just over 3 years. The first commit
+was on Aug 5, 2017.
+
+![snowman](/assets/images/worlds-most-advanced-turtle-graphics-library/commit-freq.png)
+
+The basic functionality that you saw above was completed very early in the
+development of the library. You can already use the crate right now to draw all
+kinds of different pictures. Given that that's the case, you might be wondering
+what I'm still working on 3 years later.
+
+## Multiple Async Turtles
+
+It turns out that this idea of "a turtle that draws pictures" has a ton of
+potential. For example, what if you had more than one turtle? Could you control
+them in separate threads? Remember that turtle is meant to be an educational
+tool. If you had this functionality, you could potentially use this as a really
+engaging way to teach people about topics like concurrency, parallelism, mutual
+exclusion, and synchronization.
+
+If there was a version of the `Turtle` type that could be used in [asynchronous
+code][async-book], you could use the turtle crate to teach people about `async`
+and `await` syntax. This would provide a pathway to learn about async code
+without having to necessarily also understand more complicated topics like
+building web servers or writing networking code.
+
+<blockquote class="twitter-tweet tw-align-center"><p lang="en" dir="ltr">me: writes the world&#39;s most advanced turtle graphics library<br><br>world: why...?<br><br>me: idk thought it&#39;d be cool<br><br>world: idc tho<br><br>me: 😬 <a href="https://t.co/Rizr0cBuWI">https://t.co/Rizr0cBuWI</a></p>&mdash; Sunjay (@Sunjay03) <a href="https://twitter.com/Sunjay03/status/1258830909488402432?ref_src=twsrc%5Etfw">May 8, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+[rust]: https://www.rust-lang.org/
+[turtle]: https://turtle.rs
+[Turtle Graphics]: https://en.wikipedia.org/wiki/Turtle_graphics
+[snowman example]: https://github.com/sunjay/turtle/blob/96d4b8ef49b5f2cd143674e1aac12ffb1a876ef4/examples/snowman.rs
+[circle example]: https://github.com/sunjay/turtle/blob/96d4b8ef49b5f2cd143674e1aac12ffb1a876ef4/examples/circle.rs
+[Logo programming language]: https://en.wikipedia.org/wiki/Logo_(programming_language)
+[Python turtle module]: https://docs.python.org/3/library/turtle.html
+[`set_pen_color` method]: https://docs.rs/turtle/1.0.0-rc.3/turtle/struct.Turtle.html#method.set_pen_color
+[async-book]: https://rust-lang.github.io/async-book/01_getting_started/02_why_async.html
 
 # Outline
 
