@@ -203,8 +203,43 @@ The [new new architecture][turtle-rewrite-pr] addresses all of these issues and
 more. It is designed to be as efficient as possible by reducing time spent in
 bottlenecks like IPC and rendering.
 
-TODO: "Overview" from #173 + whatever details are necessary to show that all of
-the above was addressed
+The core idea is still the same as the previous architecture: there are two
+"processes"&mdash;the server process and the main process. The server process
+(or renderer server process) is responsible for managing the window and running
+turtle drawing commands like forward, right, etc. The main process is where the
+user of the crate writes normal looking Rust code to interact with the server
+process and draw pictures. (For more on why we need two processes at all, see my
+[RustConf 2018 talk].)
+
+The differences are in the details. For example, depending on the platform
+you're using and whether or not you're running tests, turtle will use one of the
+following three backends:
+
+* `multiprocessed` (used on MacOS) - The main process and server process are
+  actually separate processes which communicate via IPC
+* `multithreaded` (used on Windows and Linux) - The main process and the server
+  process are separate tasks (basically separate threads) and communicate via
+  channels in the same process
+* `test` (used for running tests) - The server process does not actually create
+  any windows or manage events, etc.
+
+Having these backends makes it so that we can have better performance on
+platforms that do have threadsafe windowing libraries while still functioning
+correctly on platforms that do not. Almost all of the code is shared across the
+backends, so the only difference is in how the "processes" are spawned and
+whether a window is created or not.
+
+Instead of using JSON and stdin/stdout for IPC, I chose to use the [ipc-channel]
+crate. This crate uses [bincode] under the hood for fast binary serialization
+and deserialization. It is also cross-platform, so I can use it between
+processes in the `multiprocessed` backend or in the same process with the
+`multithreaded` backend. This has worked great other than a few
+[bugs][ipc-channel-bugs] that I hit along the way. The overhead of parsing JSON
+has been completely removed through using this crate.
+
+Animation has completely moved to the server process. As mentioned, we were
+previously continuously updating the current line from the main process. This
+approach loaded the IPC
 
 ## Asynchronous Turtles
 
@@ -227,6 +262,9 @@ TODO
 [RustConf 2018 talk]: https://youtu.be/Sak6-O1cvgU
 [turtle-rewrite-2017]: https://github.com/sunjay/turtle/pull/31
 [cpu-usage]: https://github.com/sunjay/turtle/issues/99
+[ipc-channel]: https://github.com/servo/ipc-channel
+[bincode]: https://github.com/servo/bincode
+[ipc-channel-bugs]: https://github.com/servo/ipc-channel/issues/266
 
 # Outline
 
