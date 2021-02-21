@@ -8,6 +8,14 @@ categories:
   - Rust
 ---
 
+This blog post goes through the process of writing an iterator over `&[T]` and `&mut [T]` using only
+safe [Rust]. This is harder to do than you might expect because of the different rules for immutable
+`&` references and mutable `&mut` references. The code we get to at the end is relatively simple and
+uses a few special tricks to make things work. You can use these tricks in your own code when you
+run into similar situations.
+
+## Iterating Over Slices
+
 [Rust] makes it pretty easy to write [iterators] over something like `&[T]` (a [slice] of some
 number of values with type `T`). [References] are [`Copy`] because you're [allowed to have several
 references that point to the same values][ref-rules]. That means that to implement an iterator over
@@ -127,6 +135,8 @@ note: ...so that reference does not outlive borrowed content
 
 For some reason, even the value we get from `self.items.get_mut` doesn't appear to have the `'a`
 lifetime we might expect to get. After all, this code does work for `&[T]`.
+
+## Breaking Things Down
 
 To understand what the difference is and why it might not work, let's break down the code a little
 more to see what steps rustc is doing implicitly for us. We'll start with the iterator over `&[T]`.
@@ -324,6 +334,8 @@ Even though we expected to borrow from `&'a mut [T]`, we end up borrowing from `
 doesn't necessarily outlive `'a`. This is unfortunate, especially because we *know* that the items
 inside `self.items` will definitely have lifetime `'a`.
 
+## The `mem::take` Trick
+
 **Don't lose hope!** There is a relatively simple trick that will allow us to fix this:
 [`mem::take`]. The `mem::take` function takes a value out of a mutable reference by replacing it
 with its default value. This is *not* an `unsafe` function because the value you take is replaced
@@ -418,6 +430,8 @@ assigning to `self.items` borrows mutably from `self.items`, the compiler has no
 the first item and the rest of the items that we're borrowing don't actually overlap with each
 other.
 
+## Using `split_first_mut`
+
 Luckily, the standard library has us covered with the [`split_first_mut`] method. This method
 returns a mutable reference to the first element of the slice and a mutable reference to the rest of
 the slice.
@@ -450,6 +464,8 @@ The `split_first_mut` method takes care of both the `items.get_mut(0)` and `&mut
 we were performing manually before. We borrow and return an item from the `&'a mut [T]` field with
 the `'a` lifetime.
 
+## The Final Iterator
+
 Now that this works, let's clean things up and get rid of some of the extra explicitness we no
 longer need in our program:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=a77553f22dd792f1ab4bcd558eb6bf58))
@@ -481,6 +497,32 @@ impl<'a, T> Iterator for Foo<'a, T> {
 This code compiles and works exactly as expected. It's a little different than what we started with,
 but still a very small amount of code at the end of the day.
 
+Although you don't need to, you could also use the `split_first` method to implement the iterator
+for `&[T]` with code almost identical to this version. Since you don't need the `mem::take` trick
+for that, you can just call `self.items.split_first()` directly.
+
+Here's what that looks like:
+([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=55cc6cf8d2e820108518317751aee56a))
+
+```rust
+struct Foo<'a, T> {
+    items: &'a [T],
+}
+
+impl<'a, T> Iterator for Foo<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let (next_item, rest) = self.items.split_first()?;
+        self.items = rest;
+
+        Some(next_item)
+    }
+}
+```
+
+## Conclusion
+
 Hopefully you now have a better understanding of the issues that come up when you write iterators
 over mutable data. The `mem::take` trick is invaluable for being able to borrow a field's value
 without borrowing from `self`. If the type you're trying to borrow from doesn't implement the
@@ -489,10 +531,12 @@ without borrowing from `self`. If the type you're trying to borrow from doesn't 
 
 ## Acknowledgements
 
-A big thank you to Alex Payne ([@myrrlyn]) and Manish Earth ([@manishearth]) who I had explain this
-to me over and over again until my intuitive understanding turned into a concrete understanding.
-When Alex told me the `mem::take` trick, I was very impressed by the simple brilliance of it. No
-unsafe code required.
+A big thank you to Alex Payne ([@myrrlyn]) and Manish Earth ([@manishearth]) for both inspiring this
+post and helping me while I was writing it. I had them both explain this to me over and over again
+until my intuitive understanding turned into a concrete understanding. When Alex told me the
+`mem::take` trick, I was very impressed by the simple brilliance of it. No unsafe code required.
+After seeing that, I immediately sat down to write this blog post so more people could know how this
+works.
 
 [Rust]: https://www.rust-lang.org/
 [iterators]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
