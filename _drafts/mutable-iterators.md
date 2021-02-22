@@ -18,7 +18,7 @@ run into similar situations.
 
 In [Rust], the type `&[T]` is a [reference] to a [slice]. The type `&[T]` is an immutable reference
 to a slice and the type `&mut [T]` is a mutable reference to a slice. The [Rust borrowing
-rules][ref-rules] allow us to have any number of immutable or "shared" references that point to the
+rules][ref-rules] allow us to have any number of immutable or ["shared" references] that point to the
 same value. To make programming with them convenient, immutable references implement the [`Copy`]
 trait.
 
@@ -273,6 +273,13 @@ the borrowed `self.items` value is only valid for the lifetime `'b`, not the `'a
 expected based on the code that worked fine before. The `&'a mut [T]` annotation on the `items`
 variable doesn't seem to be correct this time.
 
+TODO: Consider rewriting the next few parts in terms of the mental model that even though a mutable
+  reference can reborrowed any number of times, it can only be *moved* once. You can move a mutable
+  reference out of a local variable, but not a field. That's why this code doesn't work and the
+  `mem::take` solution does.
+
+TODO: Consider mentioning reborrowing since people might feel like they've seen mutable references get copied
+
 The tricky thing here is that the [Rust borrowing rules][ref-rules] only allow us to have *one*
 mutable reference to a given value at any given time. Mutable references are not `Copy`, so when we
 assign `self.items` into the `items` variable, we are *moving* it, not copying it. Rust knows that
@@ -434,13 +441,6 @@ We take the value of `self.items`, get the first item, and then reassign the fie
 items after that. If we compile this code, we no longer get the same error we were getting before!
 The lifetimes are now correct!
 
-**Why is this necessary?** Before we move on to the last error we need to fix, you may be wondering
-why this is even necessary. Why can't the compiler just figure out what we mean and use the right
-lifetime? Why are we left to use this odd hack to move a field out of a struct just to put it back
-again? I am not the most qualified person to answer to those questions, so unfortunately I can't
-provide a very good explanation for you. It probably has something to do with [subtyping and
-variance].
-
 ## Using `split_first_mut`
 
 The final error we get when we compile the latest version of our iterator is as follows:
@@ -575,11 +575,12 @@ works.
 [Rust]: https://www.rust-lang.org/
 [reference]: https://doc.rust-lang.org/std/primitive.reference.html
 [slice]: https://doc.rust-lang.org/std/primitive.slice.html
+["shared" references]: https://docs.rs/dtolnay/0.0.9/dtolnay/macro._02__reference_types.html
+[ref-rules]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
 [iterator]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
 [slice `get` method]: https://doc.rust-lang.org/stable/std/primitive.slice.html#method.get
 [`Index`]: https://doc.rust-lang.org/stable/std/ops/trait.Index.html
 [`Copy`]: https://doc.rust-lang.org/std/marker/trait.Copy.html
-[ref-rules]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
 [type annotations]: https://doc.rust-lang.org/book/ch03-02-data-types.html#data-types
 [elided]: https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision
 [fully-qualified syntax]: https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls
@@ -587,7 +588,6 @@ works.
 [`mem::take`]: https://doc.rust-lang.org/std/mem/fn.take.html
 [`MaybeUninit`]: https://doc.rust-lang.org/std/mem/union.MaybeUninit.html
 [mut-slice-default]: https://doc.rust-lang.org/std/primitive.slice.html#impl-Default
-[subtyping and variance]: https://doc.rust-lang.org/nomicon/subtyping.html
 [`split_first_mut`]:https://doc.rust-lang.org/std/primitive.slice.html#method.split_first_mut
 [`mem::replace`]: https://doc.rust-lang.org/std/mem/fn.replace.html
 [@myrrlyn]: https://twitter.com/myrrlyn
