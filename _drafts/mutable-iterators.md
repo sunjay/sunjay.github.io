@@ -16,13 +16,20 @@ run into similar situations.
 
 ## Iterating Over Slices
 
-[Rust] makes it pretty easy to write [iterators] over something like `&[T]` (a [slice] of some
-number of values with type `T`). [References] are [`Copy`] because you're [allowed to have several
-references that point to the same values][ref-rules]. That means that to implement an iterator over
-a slice, you can just take a reference to the next value in your iterator, and a reference to the
-rest of the state at the *same time*.
+In [Rust], the type `&[T]` is a [reference] to a [slice]. The type `&[T]` is an immutable reference
+to a slice and the type `&mut [T]` is a mutable reference to a slice. The [Rust borrowing
+rules][ref-rules] allow us to have any number of immutable or "shared" references that point to the
+same value. To make programming with them convenient, immutable references implement the [`Copy`]
+trait.
 
-Here's an example that implements an iterator that goes through each item of a `&[T]` value:
+To write an [iterator] over an immutable slice `&[T]`, we start by defining a type that stores the
+slice as its only field. The idea is that we use the [slice `get` method] to get the next item from
+the slice (always the first item). Then, we use the index operator `[]` (via the [`Index`] trait) to
+create a new slice that contains the second item and onwards. If we reassign our type's field to
+that subslice, the next call to the iterator will produce the second value. As this process goes on,
+we'll end up going through every value of the slice until there is nothing left.
+
+Here's what that ends up looking like in code:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1c04d41f034eeb4e3bd8bbe5513fa2ec))
 
 ```rust
@@ -68,7 +75,10 @@ impl<'a, T> Iterator for Foo<'a, T> {
 }
 ```
 
-Here are the errors we get:
+We use `get_mut` instead of `get` and take a mutable slice to the remaining items instead of an
+immutable slice.
+
+If we try to compile this, we get the following errors:
 
 ```
 error[E0495]: cannot infer an appropriate lifetime for autoref due to conflicting requirements
@@ -133,13 +143,16 @@ note: ...so that reference does not outlive borrowed content
    |                      ^^^^^^^^^^^^^^^^^^^^
 ```
 
-For some reason, even the value we get from `self.items.get_mut` doesn't appear to have the `'a`
-lifetime we might expect to get. After all, this code does work for `&[T]`.
+The compiler complains that even though the type of `self.items` is `&'a mut [T]`, it can't
+guarantee that the values we get from it will have the lifetime `'a`. This is surprising given that
+our code worked perfectly for when `self.items` had type `&'a [T]`. The lifetime parameter we're
+using hasn't changed, so shouldn't this code work too?
 
 ## Breaking Things Down
 
 To understand what the difference is and why it might not work, let's break down the code a little
-more to see what steps rustc is doing implicitly for us. We'll start with the iterator over `&[T]`.
+more to see what steps rustc is doing implicitly for us. We'll start with the first iterator we
+wrote over `&[T]`:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=11c63135d552069e86f09bc8d38de5d4))
 
 ```rust
@@ -167,9 +180,12 @@ impl<'a, T> Iterator for Foo<'a, T> {
 ```
 
 This version of our first example is much more verbose, but also closer to how you can expect rustc
-to interpret this code.[^1] Many of the types and lifetimes are now explicit with type annotations
-on the variables and the lifetime on `self` as `'b`. We've used [fully-qualified syntax] for all the
-method calls to make any [auto-referencing and auto-dereferencing][autoref] explicit.
+to interpret this code.[^1] This still compiles and runs exactly the same as the iterator code
+above. We've made some of the types explicit with [type annotations] and added some extra lifetimes
+that were previously [elided]. You can see that the new `items` variable has the type `&'a [T]`
+which is exactly what we would expect. We also gave `self` an explicit lifetime `'b` so you can see
+that it is in fact different from `'a`. We've used [fully-qualified syntax] for all the method calls
+to make any [auto-referencing and auto-dereferencing][autoref] explicit.
 
 The `let next_item = self.items.get(0)?` line turns into:
 
@@ -178,9 +194,11 @@ let items: &'a [T] = self.items;
 let next_item = <[T]>::get(items, 0)?;
 ```
 
-We *copy* `self.items` into a variable, then call get on a reference with lifetime `'a`. This is
-fine because as established above, references can be copied and we're allowed to have several that
-point to the same data at the same time. The `next_item` borrows an item from `self.items`.
+We first *copy* `self.items` into a variable that has lifetime `'a`. Then we call `get` on that
+value. This code works fine because as established above, immutable references can be copied and
+both `self.items` and the new `items` variable are allowed to point to the same value at the same
+time. The `next_item` variable borrows an item from the `items` variable, so we expect it to have
+the `'a` lifetime (even though I haven't explicitly annotated it here).
 
 The `self.items = &self.items[1..]`  line turns into:
 
@@ -189,14 +207,13 @@ let items: &'a [T] = self.items;
 self.items = <[T] as Index<_>>::index(items, 1..);
 ```
 
-Notice how we are borrowing the *same* slice from `self.items` as we did above. Again, this is fine
-because references are `Copy` and they can point to the same data multiple times at the same time.
-Even though the `next_item` variable borrows from the same slice, we are allowed to borrow it again
-here and still have our code work. We pass that reference to a method of the `Index` trait which
-returns the remainder of our slice.
+Once again, we *copy* `self.items` into a variable. Even though the `next_item` variable is still
+borrowing an item from that slice, this is fine because we're using an immutable reference. This
+time, we pass that reference to a method of the [`Index`] trait to get the remainder of the slice
+and reassign `self.items`.
 
-Now, to see why the mutable version of this code doesn't work, let's update this expanded version to
-use `&mut [T]`.
+Now, to see why the mutable version of this code doesn't work, let's try what we did earlier and
+update this expanded code to use `&mut [T]` instead of `&[T]`:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=0210a9a01002eed19f3145a76688d87d))
 
 ```rust
@@ -227,8 +244,10 @@ impl<'a, T> Iterator for Foo<'a, T> {
 > get to that later. This is just to illustrate why Rust can't generate this exact same code for
 > that version of the iterator.
 
-This code, updated to use mutable references and mutable methods everywhere, does not compile.
-Here's the compiler error:
+Like before, we've changed this code to use `get_mut` instead of `get` and taken a mutable slice of
+the remaining items using the `Index` trait instead of an immutable slice.
+
+Compiling this produces the following errors:
 
 ```
 error[E0312]: lifetime of reference outlives lifetime of borrowed content...
@@ -249,19 +268,22 @@ note: ...but the borrowed content is only valid for the lifetime `'b` as defined
    |             ^^
 ```
 
-This explains the problem quite clearly. Unlike references, mutable references are *not* `Copy`, so
-we can't move/copy the reference out of `self.items`. We have to borrow. Here, since we're taking
-the field out of `self.items`, we are borrowing from `self` which has lifetime `'b`. Thus, instead
-of the code above, a more accurate expansion would be:
+This error explains the problem by referring to the new `'b` lifetime we added above. It says that
+the borrowed `self.items` value is only valid for the lifetime `'b`, not the `'a` lifetime we
+expected based on the code that worked fine before. The `&'a mut [T]` annotation on the `items`
+variable doesn't seem to be correct this time.
 
-```rust
-let items: &'b mut [T] = &mut self.items;
-```
+The tricky thing here is that the [Rust borrowing rules][ref-rules] only allow us to have *one*
+mutable reference to a given value at any given time. Mutable references are not `Copy`, so when we
+assign `self.items` into the `items` variable, we are *moving* it, not copying it. Rust knows that
+you can't move an item out of a field that it still expects to have a value, so it assumes that you
+must be borrowing it instead. (In a different circumstance, we would get an error about not being
+able to [move out of a mutable reference](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5f833b31af59ee392bd5ab806cd89aa7)).
 
-Since `'b` is different from `'a`, we can't return it from a function that needs to return
-`Option<&'a mut T>`.
-
-With that change, we can get to a reasonably accurate expansion of the iterator we wrote for `&mut [T]`.
+Since we're now borrowing, we must have the lifetime of the value we are borrowing from: `self`.
+Since `self` has lifetime `'b`, the compiler complains that it can't guarantee that the reference
+will be valid for lifetime `'a`. To make our expanded version of our code more accurate, let's
+change the annotated lifetime to be `'b`:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=6d0930fdaddf04e9f74098c42ead4c47))
 
 ```rust
@@ -287,6 +309,9 @@ impl<'a, T> Iterator for Foo<'a, T> {
     }
 }
 ```
+
+This is now a reasonably accurate expansion for the original `&mut [T]` iterator we wrote at the
+beginning of this post.
 
 The error message we get when we compile this is nearly identical to the one we previously got for
 the original `&mut [T]` iterator. The lifetimes and method calls we made explicit allow rustc to use
@@ -330,19 +355,20 @@ note: ...so that the types are compatible
               found `Iterator`
 ```
 
-Even though we expected to borrow from `&'a mut [T]`, we end up borrowing from `&'b mut self` which
-doesn't necessarily outlive `'a`. This is unfortunate, especially because we *know* that the items
-inside `self.items` will definitely have lifetime `'a`.
+Even though we expected to borrow from `&'a mut [T]` and get a `'a` lifetime, we can now see that we
+are getting the `'b` lifetime instead. This is unfortunate, especially because we *know* that the
+items inside `self.items` definitely have lifetime `'a`. The compiler just can't see that because it
+is trying to borrow from `self` which doesn't have the right lifetime. The different rules for
+mutable references have prevented us from being able to write this code!
 
 ## The `mem::take` Trick
 
-**Don't lose hope!** There is a relatively simple trick that will allow us to fix this:
-[`mem::take`]. The `mem::take` function takes a value out of a mutable reference by replacing it
-with its default value. This is *not* an `unsafe` function because the value you take is replaced
-with initialized memory. (Uninitialized memory is not allowed in Rust except in a few very specific
-places like [`MaybeUninit`].)
+**Don't lose hope!** There is a relatively simple trick that will allow us to fix this. The
+[`mem::take`] function takes a value out of a mutable reference by replacing it with its default
+value. This is not an `unsafe` function because we're still leaving something in the location we're
+taking the value from.[^2]
 
-For example:
+Here's an example of using `mem::take`:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=d95ae089db2ab491f7ad684633d45f1f))
 
 ```rust
@@ -358,8 +384,9 @@ Using `mem::take` allows us to get around borrowing from `self`. Importantly, it
 get around Rust's lifetime rules (that would be bad!). This is just a trick for borrowing from a
 field without needing to borrow *through* `self`.
 
-Okay, so borrowing with the syntax `&mut self.items` borrows through `self`. What if we could remove
-`self` from that expression and just get `&mut items` directly? Here's what you need to do:
+When the compiler sees the syntax `&mut self.items`, it assumes that we must be borrowing from
+`self`. To avoid that, let's try to remove `self` from the equation and get `&mut items` directly.
+Here's what that looks like:
 
 ```rust
 // let next_item = self.items.get_mut(0)?;
@@ -367,13 +394,14 @@ let items: &'a mut [T] = mem::take(&mut self.items);
 let next_item: &'a mut T = <[T]>::get_mut(items, 0)?;
 ```
 
-Notice how it's now fine to annotate `items` with `&'a mut [T]`. This code works because `&mut [T]`
-has [a `Default` implementation][mut-slice-default] that uses the empty slice `&mut []` as a default
-value. Since `items` is just a local variable, and doesn't refer to `self` at all, we can now borrow
-from it with the lifetime we wanted. I've annotated `next_item` with `&'a mut T` to make that
-explicit.
+Notice how `items` is now annotated with `&'a mut [T]`, not `&'b mut [T]` as we were forced to do
+earlier. This code works because `&mut [T]` has [a `Default` implementation][mut-slice-default] that
+uses the empty slice `&mut []` as a default value. When we call `mem::take` on `self.items`,
+`self.items` becomes the empty slice and we now have the `&'a mut [T]` value to work with however we
+want. We aren't borrowing `self.items` anymore. Instead, we've *moved* it into a local variable
+called `items`. Moving the value out of `self` results in the correct lifetime for `next_item`.
 
-Let's see if this fixes the error we were seeing above:
+This is the updated code using this technique:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=af5a55e91646d0b93b407494131ca3c5))
 
 ```rust
@@ -402,11 +430,20 @@ impl<'a, T> Iterator for Foo<'a, T> {
 }
 ```
 
-We take the items out of `self.items`, get the first item, and then reassign `self.items` to the
-rest of the items after that.
+We take the value of `self.items`, get the first item, and then reassign the field to the remaining
+items after that. If we compile this code, we no longer get the same error we were getting before!
+The lifetimes are now correct!
 
-If we compile this code, we no longer get the same error we were getting before! The lifetimes are
-now correct! The new error we get is much easier to fix:
+**Why is this necessary?** Before we move on to the last error we need to fix, you may be wondering
+why this is even necessary. Why can't the compiler just figure out what we mean and use the right
+lifetime? Why are we left to use this odd hack to move a field out of a struct just to put it back
+again? I am not the most qualified person to answer to those questions, so unfortunately I can't
+provide a very good explanation for you. It probably has something to do with [subtyping and
+variance].
+
+## Using `split_first_mut`
+
+The final error we get when we compile the latest version of our iterator is as follows:
 
 ```
 error[E0499]: cannot borrow `*items` as mutable more than once at a time
@@ -424,13 +461,10 @@ error[E0499]: cannot borrow `*items` as mutable more than once at a time
    |                                                      ^^^^^ second mutable borrow occurs here
 ```
 
-Only immutable references can be held in multiple places at the same time, mutable references [must
-only be held once at any given moment][ref-rules]. Since both `next_item` and the value we're
-assigning to `self.items` borrows mutably from `self.items`, the compiler has no way of knowing that
-the first item and the rest of the items that we're borrowing don't actually overlap with each
-other.
-
-## Using `split_first_mut`
+This error says that since we're borrowing from a mutable slice, we can't have two mutable
+references that potentially point to the same value. Remember: the compiler doesn't know what slices
+are, so it can't do the math to figure out that the first item and the rest of the items won't point
+to the same values.
 
 Luckily, the standard library has us covered with the [`split_first_mut`] method. This method
 returns a mutable reference to the first element of the slice and a mutable reference to the rest of
@@ -539,19 +573,25 @@ After seeing that, I immediately sat down to write this blog post so more people
 works.
 
 [Rust]: https://www.rust-lang.org/
-[iterators]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
-[References]: https://doc.rust-lang.org/std/primitive.reference.html
+[reference]: https://doc.rust-lang.org/std/primitive.reference.html
 [slice]: https://doc.rust-lang.org/std/primitive.slice.html
+[iterator]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
+[slice `get` method]: https://doc.rust-lang.org/stable/std/primitive.slice.html#method.get
+[`Index`]: https://doc.rust-lang.org/stable/std/ops/trait.Index.html
 [`Copy`]: https://doc.rust-lang.org/std/marker/trait.Copy.html
 [ref-rules]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
+[type annotations]: https://doc.rust-lang.org/book/ch03-02-data-types.html#data-types
+[elided]: https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision
 [fully-qualified syntax]: https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls
 [autoref]: https://doc.rust-lang.org/book/ch05-03-method-syntax.html#wheres-the---operator
 [`mem::take`]: https://doc.rust-lang.org/std/mem/fn.take.html
 [`MaybeUninit`]: https://doc.rust-lang.org/std/mem/union.MaybeUninit.html
 [mut-slice-default]: https://doc.rust-lang.org/std/primitive.slice.html#impl-Default
+[subtyping and variance]: https://doc.rust-lang.org/nomicon/subtyping.html
 [`split_first_mut`]:https://doc.rust-lang.org/std/primitive.slice.html#method.split_first_mut
 [`mem::replace`]: https://doc.rust-lang.org/std/mem/fn.replace.html
 [@myrrlyn]: https://twitter.com/myrrlyn
 [@manishearth]: https://twitter.com/manishearth
 
 [^1]: This is meant to be more illustrative than accurate, so don't expect this to be *exactly* what rustc would do.
+[^2]: Uninitialized memory is not allowed in Rust except in a few very specific places like [`MaybeUninit`]. You can't safely move a value out of a mutable reference to a field.
