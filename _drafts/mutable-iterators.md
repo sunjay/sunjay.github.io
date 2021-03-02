@@ -8,26 +8,69 @@ categories:
   - Rust
 ---
 
-This blog post goes through the process of writing an iterator over `&[T]` and `&mut [T]` using only
-safe [Rust]. This is harder to do than you might expect because of the different rules for immutable
-`&` references and mutable `&mut` references. The code we get to at the end is relatively simple and
-uses a few special tricks to make things work. You can use these tricks in your own code when you
-run into similar situations.
+This blog post goes through the process of writing an iterator over an immutable slice `&[T]` and a
+mutable slice `&mut [T]` using only safe [Rust]. This is harder to do than you might expect because
+of the different rules for immutable `&` references and mutable `&mut` references. Having said that,
+the code we get to at the end is still relatively simple thanks to a few special tricks to make
+things work. You can use these tricks in your own code when you run into similar situations.
+
+## Review: References & Slices
+
+In [Rust], the `&[T]` and `&mut [T]` types are [references] to a [slice]. For convenience, we often
+use the shorthand "slice" for `&[T]` and "mutable slice" for `&mut [T]`. If we want to disambiguate
+between the two, we can use the term "immutable slice" for `&[T]` to make the type of [borrow]
+explicit.
+
+The [Rust borrowing rules][ref-rules] allow us to have any number of immutable (or ["shared"])
+references that point to the same value. To make programming with them convenient, immutable
+references implement the [`Copy`] trait. Mutable references on the other hand can only be ["moved"],
+not copied. Rust has the concept of a ["reborrow"] that makes mutable references a little more
+convenient to work with.
+
+Here's an example:
+([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1d2bfb18f67425d0cbd872e193939f9c))
+
+```rust
+// A `Vec` type does not implement `Copy`, so we
+// usually work with it through references
+let mut items = vec![1, 2, 3];
+
+// We can have as many immutable references to
+// the data in `items` as we want
+let imm1 = &items[0];
+let imm2 = &items[1];
+let imm3 = &items[0]; // Same item as imm1!
+println!("{} {} {}", imm1, imm2, imm3);
+
+// Only one mutable reference is allowed at a
+// time, so this code won't work. Rust doesn't
+// verify that index 0 and index 1 are different!
+let mut1 = &mut items[0];
+let mut2 = &mut items[1];
+println!("{} {}", mut1, mut2);
+
+// Reborrowing example
+let mut3 = &mut items[0];
+// You would think that this would move the
+// mutable reference out of `mut3`, but Rust
+// is actually smart enough to "reborrow"
+// instead. That means this line is actually
+// interpreted as `change_value(&mut *mut3)`.
+change_value(mut3);
+// We can still use `mut3` because it was
+// borrowed, not moved. The borrow ended
+// at the end of the `change_value` call.
+println!("{}", *mut3);
+```
 
 ## Iterating Over Slices
 
-In [Rust], the type `&[T]` is a [reference] to a [slice]. The type `&[T]` is an immutable reference
-to a slice and the type `&mut [T]` is a mutable reference to a slice. The [Rust borrowing
-rules][ref-rules] allow us to have any number of immutable or ["shared" references] that point to the
-same value. To make programming with them convenient, immutable references implement the [`Copy`]
-trait.
-
-To write an [iterator] over an immutable slice `&[T]`, we start by defining a type that stores the
-slice as its only field. The idea is that we use the [slice `get` method] to get the next item from
-the slice (always the first item). Then, we use the index operator `[]` (via the [`Index`] trait) to
-create a new slice that contains the second item and onwards. If we reassign our type's field to
-that subslice, the next call to the iterator will produce the second value. As this process goes on,
-we'll end up going through every value of the slice until there is nothing left.
+To write our [iterator] over the slice `&[T]` type, we are going to start by defining a struct that
+stores the slice as its only field. The idea is that we use the [slice `get` method] to get the next
+item from the slice (always the first item). Then, we use the index operator `[]` (via the [`Index`]
+trait) to create a new slice that contains the second item and onwards. If we reassign our struct's
+field to that subslice, the next call to the iterator will produce the second value. As this process
+goes on, we'll end up going through every value of the slice until there is nothing left.
 
 Here's what that ends up looking like in code:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1c04d41f034eeb4e3bd8bbe5513fa2ec))
@@ -51,6 +94,12 @@ impl<'a, T> Iterator for Foo<'a, T> {
     }
 }
 ```
+
+> **Note:** If you look at the [source code for the standard library `slice::Iter`
+> type][iter-source], you'll see that their implementation is much more complicated than ours and
+> that it uses unsafe code. This is because the standard library needs to support more features
+> (like [double-ended iteration]) and achieve maximum performance. We're going for something much
+> simpler and more illustrative here.
 
 The exact same code, converted to use mutable references does not work:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=6221885c81ffc77055ac991a7573e730))
@@ -573,14 +622,19 @@ After seeing that, I immediately sat down to write this blog post so more people
 works.
 
 [Rust]: https://www.rust-lang.org/
-[reference]: https://doc.rust-lang.org/std/primitive.reference.html
+[references]: https://doc.rust-lang.org/std/primitive.reference.html
+[`Copy`]: https://doc.rust-lang.org/std/marker/trait.Copy.html
 [slice]: https://doc.rust-lang.org/std/primitive.slice.html
-["shared" references]: https://docs.rs/dtolnay/0.0.9/dtolnay/macro._02__reference_types.html
+["shared"]: https://docs.rs/dtolnay/0.0.9/dtolnay/macro._02__reference_types.html
+[borrow]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
 [ref-rules]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
+["moved"]: https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html
+["reborrow"]: https://github.com/rust-lang/reference/issues/788
 [iterator]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
 [slice `get` method]: https://doc.rust-lang.org/stable/std/primitive.slice.html#method.get
 [`Index`]: https://doc.rust-lang.org/stable/std/ops/trait.Index.html
-[`Copy`]: https://doc.rust-lang.org/std/marker/trait.Copy.html
+[iter-source]: https://github.com/rust-lang/rust/blob/4f20caa6258d4c74ce6b316fd347e3efe81cf557/library/core/src/slice/iter.rs#L66
+[double-ended iteration]: https://doc.rust-lang.org/std/iter/trait.DoubleEndedIterator.html
 [type annotations]: https://doc.rust-lang.org/book/ch03-02-data-types.html#data-types
 [elided]: https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision
 [fully-qualified syntax]: https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls
