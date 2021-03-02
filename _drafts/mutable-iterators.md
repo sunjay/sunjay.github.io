@@ -95,11 +95,12 @@ impl<'a, T> Iterator for Foo<'a, T> {
 }
 ```
 
-> **Note:** If you look at the [source code for the standard library `slice::Iter`
-> type][iter-source], you'll see that their implementation is much more complicated than ours and
-> that it uses unsafe code. This is because the standard library needs to support more features
-> (like [double-ended iteration]) and achieve maximum performance. We're going for something much
-> simpler and more illustrative here.
+**Note:** If you look at the [source code for the standard library `slice::Iter` type][iter-source],
+you'll see that their implementation is much more complicated than ours and that it uses unsafe
+code. This is because the standard library needs to support more features (like [double-ended
+iteration]) and achieve maximum performance. We're going for something much simpler and more
+illustrative here.
+{: .alert}
 
 The exact same code, converted to use mutable references does not work:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=6221885c81ffc77055ac991a7573e730))
@@ -289,9 +290,10 @@ impl<'a, T> Iterator for Foo<'a, T> {
 }
 ```
 
-> Note: This is *not* the expanded version of the original iterator we wrote for `&mut [T]`. We'll
-> get to that later. This is just to illustrate why Rust can't generate this exact same code for
-> that version of the iterator.
+**Note:** This is *not* the expanded version of the original iterator we wrote for `&mut [T]`. We'll
+get to that later. This is just to illustrate why Rust can't generate this exact same code for that
+version of the iterator.
+{: .alert}
 
 Like before, we've changed this code to use `get_mut` instead of `get` and taken a mutable slice of
 the remaining items using the `Index` trait instead of an immutable slice.
