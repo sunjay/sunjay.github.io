@@ -100,10 +100,16 @@ impl<'a, T> Iterator for Foo<'a, T> {
 you'll see that their implementation is much more complicated than ours and that it uses unsafe
 code. This is because the standard library needs to support more features (like [double-ended
 iteration]) and achieve maximum performance. We're going for something much simpler and more
-illustrative here.
+illustrative for our version.
 {: .alert}
 
-The exact same code, converted to use mutable references does not work:
+This code works exactly as we would expect. It allows us to go through each item in the slice with
+no issues at all.
+
+That's great! But unfortunately the story isn't as simple when we switch to `&mut [T]`. The exact
+same code, converted to use mutable references does not work.
+
+Here's what that looks like:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=6221885c81ffc77055ac991a7573e730))
 
 ```rust
@@ -126,7 +132,7 @@ impl<'a, T> Iterator for Foo<'a, T> {
 }
 ```
 
-We use `get_mut` instead of `get` and take a mutable slice to the remaining items instead of an
+This uses `get_mut` instead of `get` and takes a mutable slice of the remaining items instead of an
 immutable slice.
 
 If we try to compile this, we get the following errors:
@@ -196,8 +202,8 @@ note: ...so that reference does not outlive borrowed content
 
 The compiler complains that even though the type of `self.items` is `&'a mut [T]`, it can't
 guarantee that the values we get from it will have the lifetime `'a`. This is surprising given that
-our code worked perfectly for when `self.items` had type `&'a [T]`. The lifetime parameter we're
-using hasn't changed, so shouldn't this code work too?
+our code worked perfectly when `self.items` had type `&'a [T]`. The lifetime parameter we're using
+hasn't changed, so shouldn't this code work too?
 
 ## Breaking Things Down
 
