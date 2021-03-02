@@ -208,8 +208,8 @@ hasn't changed, so shouldn't this code work too?
 ## Breaking Things Down
 
 To understand what the difference is and why it might not work, let's break down the code a little
-more to see what steps rustc is doing implicitly for us. We'll start with the first iterator we
-wrote over `&[T]`:
+more to see what steps rustc is doing implicitly for us. We'll start by taking a step back and
+looking closer at the first iterator we wrote for `&[T]`:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=11c63135d552069e86f09bc8d38de5d4))
 
 ```rust
@@ -240,9 +240,10 @@ This version of our first example is much more verbose, but also closer to how y
 to interpret this code.[^1] This still compiles and runs exactly the same as the iterator code
 above. We've made some of the types explicit with [type annotations] and added some extra lifetimes
 that were previously [elided]. You can see that the new `items` variable has the type `&'a [T]`
-which is exactly what we would expect. We also gave `self` an explicit lifetime `'b` so you can see
-that it is in fact different from `'a`. We've used [fully-qualified syntax] for all the method calls
-to make any [auto-referencing and auto-dereferencing][autoref] explicit.
+(exactly as we would expect). We also gave `self` an explicit lifetime `'b` so you can see that it
+is in fact different from `'a`. That detail isn't relevant here just yet, but it will be shortly.
+We've used [fully-qualified syntax] for all the method calls to help make any [auto-referencing and
+auto-dereferencing][autoref] explicit.
 
 The `let next_item = self.items.get(0)?` line turns into:
 
@@ -336,7 +337,8 @@ TODO: Consider rewriting the next few parts in terms of the mental model that ev
   reference out of a local variable, but not a field. That's why this code doesn't work and the
   `mem::take` solution does.
 
-TODO: Consider mentioning reborrowing since people might feel like they've seen mutable references get copied
+TODO: Note that before when we copied there was still a value in the field. Here, if we move, there
+  won't be any value there anymore. That is not allowed!
 
 The tricky thing here is that the [Rust borrowing rules][ref-rules] only allow us to have *one*
 mutable reference to a given value at any given time. Mutable references are not `Copy`, so when we
