@@ -65,12 +65,13 @@ println!("{}", *mut3);
 
 ## Iterating Over Slices
 
-To write our [iterator] over the slice `&[T]` type, we are going to start by defining a struct that
-stores the slice as its only field. The idea is that we use the [slice `get` method] to get the next
-item from the slice (always the first item). Then, we use the index operator `[]` (via the [`Index`]
-trait) to create a new slice that contains the second item and onwards. If we reassign our struct's
-field to that subslice, the next call to the iterator will produce the second value. As this process
-goes on, we'll end up going through every value of the slice until there is nothing left.
+To write our [iterator] over the slice `&[T]` type, we will start by defining a struct that stores
+the slice as its only field. The idea is that we use the [slice `get` method] to get the next item
+from the slice[^slice-get] (always the first item). Then, we use the index operator `[]` (via the
+[`Index`] trait) to create a new slice that contains the second item and onwards. If we reassign our
+struct's field to that subslice, the next call to the iterator will produce the second value. As
+this process goes on, we'll end up going through every value of the slice until there is nothing
+left.
 
 Here's what that ends up looking like in code:
 ([Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1c04d41f034eeb4e3bd8bbe5513fa2ec))
@@ -634,6 +635,7 @@ works.
 ["reborrow"]: https://github.com/rust-lang/reference/issues/788
 [iterator]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
 [slice `get` method]: https://doc.rust-lang.org/stable/std/primitive.slice.html#method.get
+[slice `first` method]: https://doc.rust-lang.org/stable/std/primitive.slice.html#method.first
 [`Index`]: https://doc.rust-lang.org/stable/std/ops/trait.Index.html
 [iter-source]: https://github.com/rust-lang/rust/blob/4f20caa6258d4c74ce6b316fd347e3efe81cf557/library/core/src/slice/iter.rs#L66
 [double-ended iteration]: https://doc.rust-lang.org/std/iter/trait.DoubleEndedIterator.html
@@ -649,5 +651,6 @@ works.
 [@myrrlyn]: https://twitter.com/myrrlyn
 [@manishearth]: https://twitter.com/manishearth
 
+[^slice-get]: We could have also used the [slice `first` method] instead of the [slice `get` method]. I opted to use `get(0)` because I felt like it made `items[1..]` slightly easier to understand. It makes little to no difference in practice.
 [^1]: This is meant to be more illustrative than accurate, so don't expect this to be *exactly* what rustc would do.
 [^2]: Uninitialized memory is not allowed in Rust except in a few very specific places like [`MaybeUninit`]. You can't safely move a value out of a mutable reference to a field.
