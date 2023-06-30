@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunjay Varma</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/style/main.css">
+</head>
+<body class="bg-dark">
+  <article class="container d-flex flex-column align-items-center justify-content-center">
+    <div class="card text-bg-light mt-3 mb-3">
+      <div class="card-body p-md-5 p-4">
+        <h1 class="pb-3 text-center">Sunjay Varma</h1>
+
+        <p class="text-center">
+          <a href="/">Home</a>
+        </p>
+
+        <form id="contact-form" action="https://formspree.io/f/varma.sunjay@gmail.com" method="post">
+            <p>Do you have comments or questions about my writing or one of my projects?</p>
+            <p>Fill in the form below to send me an email.</p>
+
+            <p class="text-danger">All fields are required.</p>
+
+            <input type="hidden" name="_next" value="https://sunjay.dev/contact" />
+            <input type="text" name="_gotcha" style="display: none" />
+
+            <div class="form-floating mb-3">
+                <input id="contact-name" class="form-control" type="text" name="name" placeholder="Name" required />
+                <label for="contact-name" class="col-md-2 col-form-label">Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input id="contact-email" class="form-control" type="email" name="_replyto" placeholder="Email" required />
+                <label for="contact-email" class="col-md-2 col-form-label">Email</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input id="contact-subject" class="form-control" type="text" name="subject" placeholder="Subject" required />
+                <label for="contact-subject" class="col-md-2 col-form-label">Subject</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <textarea id="contact-message" class="form-control" style="min-height: 200px;" name="message" placeholder="Hi Sunjay, thanks for being awesome!" required></textarea>
+                <label for="contact-message" class="col-md-2 col-form-label">Message</label>
+            </div>
+
+            <div class="d-flex">
+                <input class="btn btn-primary btn-block flex-grow-1" type="submit" value="Send" />
+            </div>
+        </form>
+
+        <div id="contact-success" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <strong>Sent!</strong> Thanks for getting in touch!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div id="contact-error" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <strong>Error:</strong> <span class="error-message">Error message not found.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+    integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+  <script src="/js/contact.js"></script>
+</body>
+</html>
