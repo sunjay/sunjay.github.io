@@ -32,6 +32,7 @@ contact_form.addEventListener('submit', event => {
             restoreForm(contact_form);
         } else {
             response.json().then(data => {
+                console.error(data);
                 if (Object.hasOwn(data, 'errors')) {
                     showError(data.errors.map(error => error.message).join(', '));
                     restoreForm(contact_form);
