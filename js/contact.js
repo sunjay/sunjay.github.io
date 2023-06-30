@@ -7,6 +7,8 @@ const TEST_MODE = 0;
 // Amount to fake delay before returning results
 const TEST_DELAY = 2000; // ms
 
+const GRECAPTCHA_SITE_KEY = '6LfS7uQmAAAAAKY1yeC9awE9Cr8jEeWjjbruEgXo';
+
 const contact_form = document.getElementById('contact-form');
 const contact_success = document.getElementById('contact-success');
 contact_success.remove();
@@ -75,8 +77,16 @@ function restoreForm(form) {
     submit_input.value = submit_input.dataset.original_value;
 }
 
-function sendForm(form) {
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function sendForm(form) {
     if (TEST_MODE === 0) {
+        const token = await checkCaptcha();
+        console.info("Captcha Token", token);
+        document.getElementById('g-recaptcha-response').value = token;
+
         const data = new FormData(form);
         const req = fetch(form.action, {
             method: form.method,
@@ -85,36 +95,46 @@ function sendForm(form) {
                 'Accept': 'application/json',
             },
         });
-        return req;
+
+        return await req;
+
     } else if (TEST_MODE === 1) {
-        return new Promise(resolve => {
-            setTimeout(() => resolve({
-                ok: true,
-            }), TEST_DELAY);
+        await delay(TEST_DELAY);
+
+        return Promise.resolve({
+            ok: true,
         });
+
     } else if (TEST_MODE === 2) {
-        return new Promise(resolve => {
-            setTimeout(() => resolve({
-                ok: false,
-                json() {
-                    return Promise.resolve({
-                        errors: [
-                            {message: 'Test error: Wow you are awesome!'},
-                            {message: 'Test error: You look great today!'},
-                        ],
-                    });
-                },
-            }), TEST_DELAY);
+        await delay(TEST_DELAY);
+
+        return Promise.resolve({
+            ok: false,
+            json() {
+                return Promise.resolve({
+                    errors: [
+                        {message: 'Test error: Wow you are awesome!'},
+                        {message: 'Test error: You look great today!'},
+                    ],
+                });
+            },
         });
+
     } else if (TEST_MODE === 3) {
-        return new Promise(resolve => {
-            setTimeout(() => resolve({
-                ok: false,
-                json() {
-                    return Promise.resolve({});
-                },
-            }), TEST_DELAY);
+        await delay(TEST_DELAY);
+
+        return Promise.resolve({
+            ok: false,
+            json() {
+                return Promise.resolve({
+                    ok: false,
+                    json() {
+                        return Promise.resolve({});
+                    },
+                });
+            },
         });
+
     } else {
         return new Promise((_, reject) => {
             setTimeout(() => reject(new Error('wowww!')), TEST_DELAY);
@@ -138,4 +158,16 @@ function showError(message) {
     alert.querySelector('.error-message').innerHTML = message;
     contact_form.parentElement.append(alert);
     scrollIntoView(alert);
+}
+
+/**
+ * Returns a promise that is resolved with a captcha token
+ */
+function checkCaptcha() {
+    return new Promise(resolve => {
+        grecaptcha.ready(function () {
+            // execute() returns a promise
+            resolve(grecaptcha.execute(GRECAPTCHA_SITE_KEY, { action: 'submit' }));
+        });
+    });
 }
