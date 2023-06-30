@@ -90,7 +90,14 @@ async function sendForm(form) {
         console.info("Captcha Token", token);
         document.getElementById('g-recaptcha-response').value = token;
 
-        const data = new FormData(form);
+        const data = new FormData();
+        // FormData doesn't include disabled fields so we need to build it ourselves
+        form.querySelectorAll('input,textarea').forEach(el => {
+            if (el.name !== '') {
+                data.append(el.name, el.value);
+            }
+        });
+
         const req = fetch(form.action, {
             method: form.method,
             headers: {
