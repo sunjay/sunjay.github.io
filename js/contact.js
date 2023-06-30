@@ -93,10 +93,11 @@ async function sendForm(form) {
         const data = new FormData(form);
         const req = fetch(form.action, {
             method: form.method,
-            body: data,
             headers: {
+                'Content-Type': 'application/json',
                 'Accept': 'application/json',
             },
+            body: JSON.stringify(Object.fromEntries(data)),
         });
 
         return await req;
