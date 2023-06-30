@@ -38,6 +38,9 @@ contact_form.addEventListener('submit', event => {
                 if (Object.hasOwn(data, 'errors')) {
                     showError(data.errors.map(error => error.message).join(', '));
                     restoreForm(contact_form);
+                } else if (Object.hasOwn(data, 'error')) {
+                    showError(data.error);
+                    restoreForm(contact_form);
                 } else {
                     showError('There was a problem sending your message. Please try again later.');
                     restoreForm(contact_form);
